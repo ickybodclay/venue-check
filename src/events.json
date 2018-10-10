@@ -1,0 +1,78 @@
+{
+    "items": [
+     {
+      "summary": "Pay day"
+     },
+     {
+      "summary": "Petterson Comp Meeting",
+      "location": "Detroit 6 West - Lovelace",
+      "start": {
+       "dateTime": "2018-10-26T13:00:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-26T14:00:00-04:00"
+      }
+     },
+     {
+      "summary": "Hack Day DEMOS",
+      "location": "5th Floor Bleachers, Detroit 5th Floor Bleachers",
+      "start": {
+       "dateTime": "2014-10-03T16:30:00-04:00"
+      },
+      "end": {
+       "dateTime": "2014-10-03T17:00:00-04:00"
+      }
+     },
+     {
+      "summary": "Hack Day DEMOS",
+      "location": "5th Floor Bleachers, Detroit 5th Floor Bleachers",
+      "start": {
+       "dateTime": "2018-10-26T16:30:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-26T17:00:00-04:00"
+      },
+      "recurringEventId": "o7votqb252fvoacl70qk0206pg_R20181019T203000"
+     },
+     {
+      "summary": "Hack Day DEMOS",
+      "location": "5th Floor Bleachers, Detroit 5th Floor Bleachers",
+      "start": {
+       "dateTime": "2018-10-19T16:30:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-19T17:00:00-04:00"
+      }
+     },
+     {
+      "summary": "TEST1",
+      "location": "Planet Ant Black Box, 2357 Caniff St, Hamtramck, MI 48212, USA",
+      "start": {
+       "dateTime": "2018-10-26T10:00:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-26T11:00:00-04:00"
+      }
+     },
+     {
+      "summary": "TEST3",
+      "location": "Planet Ant Studio, 11831 Joseph Campau Ave, Hamtramck, MI 48212, USA",
+      "start": {
+       "dateTime": "2018-10-26T10:00:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-26T11:00:00-04:00"
+      }
+     },
+     {
+      "summary": "TEST2",
+      "location": "Ant Hall, 2320 Caniff St, Hamtramck, MI 48212, USA",
+      "start": {
+       "dateTime": "2018-10-26T10:30:00-04:00"
+      },
+      "end": {
+       "dateTime": "2018-10-26T11:30:00-04:00"
+      }
+     }
+    ]
+   }
