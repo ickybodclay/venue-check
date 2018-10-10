@@ -10,44 +10,25 @@ class App extends Component {
     this.state = {
       venueData: {
         "Planet Ant Black Box" : {
-          address: "2357 Caniff St, Hamtramck, MI 48212",
-          eventsData: {
-            "1am": {
-              eventName: "Foo Test",
-            }
-          }
+          address: "2357 Caniff St, Hamtramck, MI 48212"
         },
         "Planet Ant Black Box (2nd Floor)" : {
-          address: "2357 Caniff St, Hamtramck, MI 48212",
-          eventsData: {
-            "7pm": {
-              eventName: "Bar Test",
-            }
-          }
+          address: "2357 Caniff St, Hamtramck, MI 48212"
         },
         "Ant Hall (Main Stage)" : {
           address: "2320 Caniff St, Hamtramck, MI 48212",
-          eventsData: {}
         },
         "Ant Hall (Green Room)" : {
           address: "2320 Caniff St, Hamtramck, MI 48212",
-          eventsData: {}
         },
         "Ant Hall (New Bros)" : {
           address: "2320 Caniff St, Hamtramck, MI 48212",
-          eventsData: {}
         },
         "Ant Hall (Front Room)" : {
           address: "2320 Caniff St, Hamtramck, MI 48212",
-          eventsData: {}
         },
         "Podcast Studio" : {
           address: "11831 Joseph Campau Ave, Hamtramck, MI 48212",
-          eventsData: {
-            "5pm": {
-              eventName: "Pod Test",
-            }
-          }
         }
       },
       timeData: [
@@ -75,7 +56,19 @@ class App extends Component {
         "10pm",
         "11pm",
         "12pm"
-      ]
+      ],
+      eventsData: {
+        "Planet Ant Black Box" : [
+          {
+            name: "Foo Test",
+            times: ["1am","2am","3am"]
+          },
+          {
+            name: "Bar Test",
+            times: ["7pm","8pm","9pm"]
+          }
+        ]
+      }
     }
   }
 
@@ -87,29 +80,29 @@ class App extends Component {
   }
 
   parseCalendarEventsResponse(response) {
-    // TODO clear old eventsData
-    //this.state.venueData.eventsData = {}
-    //this.setState({venueData})
+    // this.setState({
+    //   eventsData : {}
+    // });
 
-    response.items.map(event => {
+    response.items.forEach(event => {
       console.log(event)
       if (event.location) {
         //const venue = event.location
         //const eventName = event.summary
         if (event.start && event.end) {
+          // TODO figure out times for given range
           //const startTime = event.start.dateTime
           //const endTime = event.end.dateTime
           //newEvent.eventName = eventName
         } 
-      }     
-      return 1
+      }   
     });
   }
 
   render() {
     return (
       <div className="App">
-        <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} />
+        <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
       </div>
     );
   }
@@ -127,17 +120,29 @@ class VenueTable extends React.Component {
     });
     console.log(columns)
 
-    const rows = [];
+    const rows = []
     for (let i = 0; i < this.props.timeData.length; i++) {
       let children = []
-      let rowLabel = this.props.timeData[i]
-      children.push(<TimeCell key={i} time={this.props.timeData[i]} />) // time
+      const time = this.props.timeData[i]
+      children.push(<TimeCell key={i} time={this.props.timeData[i]} />)
       for (let j = 0; j < venues.length; j++) {
-        if (this.props.venueData[venues[j]].eventsData.hasOwnProperty(rowLabel)) {
-          children.push(<EventCell key={rowLabel + j} event={this.props.venueData[venues[j]].eventsData[rowLabel]} />) // event data
+        const venue = venues[j]
+        if (this.props.eventsData.hasOwnProperty(venue)) {
+          let timeFound = false
+          this.props.eventsData[venue].forEach(event => {
+            if(event.times.includes(time)) {
+              children.push(<EventCell key={time + j} event={event} />)
+              timeFound = true
+              return;
+            }
+          });
+
+          if (!timeFound) {
+            children.push(<EventCell key={time + j} event={null} />)
+          }
         }
         else {
-          children.push(<EventCell key={rowLabel + j} event={null} />)
+          children.push(<EventCell key={time + j} event={null} />)
         }
       }
       rows.push(<TimeRow key={i} children={children} />)
@@ -173,7 +178,7 @@ class VenueCell extends React.Component {
 
 class TimeCell extends React.Component {
   render() {
-    const time = this.props.time;
+    const time = this.props.time
     return (
       <td>{time}</td>
     );
@@ -182,10 +187,10 @@ class TimeCell extends React.Component {
 
 class EventCell extends React.Component {
   render() {
-    const event = this.props.event;
+    const event = this.props.event
     if (event) {
       return (
-        <td>{event.eventName}</td>
+        <td>{event.name}</td>
       );
     }
 
