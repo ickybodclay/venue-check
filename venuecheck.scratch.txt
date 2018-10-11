@@ -7,8 +7,10 @@ TODO
 ✓ Add OAuth login
 ✓ Make call to Calendar API using auth token
     ✓ Use todays date as initial load
-    - Add calendar button to change selected date.
+    ✓ Add calendar button to change selected date.
     - Add refresh button to clear and refetch events for the day.
+* Add way to add/remove locations
+    - Save previously added locations to cookie
 
 https://developers.google.com/apis-explorer/?hl=en_US#p/calendar/v3/calendar.events.get
 

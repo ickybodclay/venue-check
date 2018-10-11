@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { GoogleLogout } from 'react-google-login';
-//import logo from './logo.svg';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
 import apiConfig from './api_config.json'
 import oauthConfig from './client_secret.json'
@@ -59,70 +61,80 @@ class App extends Component {
         "11pm",
         "12am"
       ],
-      eventsData: { }
-    }
+      eventsData: { },
+      accessToken: "",
+      currentDate: moment()
+    };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    this.showLoginButton()
+    this.showLoginButton();
   }
 
   showLoginButton() {
-    document.getElementById('googleLoginButton').hidden = false
-    document.getElementById('googleLogoutButton').hidden = true
+    document.getElementById('googleLoginButton').hidden = false;
+    document.getElementById('googleLogoutButton').hidden = true;
   }
 
   showLogoutButton() {
-    document.getElementById('googleLoginButton').hidden = true
-    document.getElementById('googleLogoutButton').hidden = false
+    document.getElementById('googleLoginButton').hidden = true;
+    document.getElementById('googleLogoutButton').hidden = false;
+  }
+
+  handleChange(date) {
+    this.setState({
+      currentDate: date
+    });
+
+    if (this.state.accessToken !== "") {
+      this.fetchEvents(date);
+    }
   }
 
   parseCalendarEventsResponse(response) {
-    //console.log(response)
-    let eventsData = {}
+    let eventsData = {};
     response.items.forEach(event => {
-      //console.log(event)
       if (event.location) {
-        const venue = event.location.split(",")[0]
-        const eventName = event.summary
+        const venue = event.location.split(",")[0];
+        const eventName = event.summary;
         if (event.start && event.end) {
-          const startTime = new Date(event.start.dateTime)
-          const endTime = new Date(event.end.dateTime)
-          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1)
+          const startTime = new Date(event.start.dateTime);
+          const endTime = new Date(event.end.dateTime);
+          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1);
 
           if (!eventsData[venue]) {
-            eventsData[venue] = []
+            eventsData[venue] = [];
           }
 
-          eventsData[venue].push({name: eventName, times: times})
+          eventsData[venue].push({name: eventName, times: times});
         }
       }   
     });
 
     this.setState({
       eventsData : eventsData
-    })
+    });
   }
 
-  getCurrentDay() {
-    // TODO be able to change this, maybe add to state and change via calendar picker?
-    return new Date();
-  }
+  fetchEvents(date) {
+    //console.log("fetching events for " + date.toISOString());
+    this.setState({
+      eventsData : {}
+    });
 
-  responseGoogle = (response) => {
-    const now = this.getCurrentDay()
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) 
-    console.log(start.toISOString())
-    console.log(end.toISOString())
+    const start = new Date(date.year(), date.month(), date.date(), 0, 0, 0, 0);
+    const end = new Date(date.year(), date.month(), date.date() + 1, 0, 0, 0, 0);
+    console.log(start.toISOString());
+    console.log(end.toISOString());
 
-    const token = response.Zi.access_token
-    const calendar  = encodeURIComponent("primary")
-    const timeMin   = encodeURIComponent(start.toISOString())
-    const timeMax   = encodeURIComponent(end.toISOString())
-    const fields    = encodeURIComponent("items(end,location,start,summary)")
-    const key       = encodeURIComponent(getGoogleApiKey())
-    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`
+    const token     = this.state.accessToken;
+    const calendar  = encodeURIComponent("primary");
+    const timeMin   = encodeURIComponent(start.toISOString());
+    const timeMax   = encodeURIComponent(end.toISOString());
+    const fields    = encodeURIComponent("items(end,location,start,summary)");
+    const key       = encodeURIComponent(getGoogleApiKey());
+    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`;
     fetch(eventListRequest, {method:'get', headers: new Headers({'Authorization' : 'Bearer ' + token})})
       .then(res => res.json())
       .then(
@@ -136,9 +148,14 @@ class App extends Component {
       );
   }
 
-  logout = () => {
-    console.log("logout pressed");
+  responseGoogle = (response) => {
+    this.setState({
+      accessToken: response.Zi.access_token
+    })
+    this.fetchEvents(this.state.currentDate);
+  }
 
+  logout = () => {
     this.setState({
       eventsData : {}
     });
@@ -149,6 +166,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <br/>
+        <DatePicker
+          selected={this.state.currentDate}
+          onChange={this.handleChange}
+        />
+        <br/>
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
         <br/>
         <div id="googleLoginButton">
