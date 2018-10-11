@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import GoogleLogin from 'react-google-login';
 //import logo from './logo.svg';
+import './App.css';
 import apiConfig from './api_config.json'
 import oauthConfig from './client_secret.json'
 import gcalEventsData from './events.json' // FOR TESTING ONLY - Google API Explorer saved response json
-import './App.css';
-//import ReactDOM from 'react-dom';
 
 class App extends Component {
   constructor() {
@@ -94,10 +95,10 @@ class App extends Component {
   }
 
   parseCalendarEventsResponse(response) {
-    console.log(response)
+    //console.log(response)
     let eventsData = {}
     response.items.forEach(event => {
-      console.log(event)
+      //console.log(event)
       if (event.location) {
         const venue = event.location.split(",")[0]
         const eventName = event.summary
@@ -124,6 +125,15 @@ class App extends Component {
     return (
       <div className="App">
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
+        <div id="Login">
+          <br/>
+          <GoogleLogin
+            clientId={getGoogleClientId()}
+            buttonText="Login"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+          />
+        </div>
       </div>
     );
   }
@@ -139,6 +149,10 @@ function getGoogleApiKey() {
 
 function getGoogleClientId() {
   return oauthConfig.web.client_id
+}
+
+const responseGoogle = (response) => {
+  console.log(response);
 }
 
 class VenueTable extends React.Component {
