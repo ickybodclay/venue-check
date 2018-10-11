@@ -1,13 +1,14 @@
 TODO
-* Parse get events response, transform to eventsData per venue.
-    - Ignore date & timezone from dateTime, just pull time.
-    - If no location, ignore.
-    - If no location in list of known venues, ignore.
+✓ Parse get events response, transform to eventsData per venue.
+    ✓ Ignore date & timezone from dateTime, just pull time.
+    ✓ If no location, ignore.
+    ✓ If no location in list of known venues, ignore.
     - If no dateTime, assume all day event.
-* Add OAuth login and store token (cookie?)
-* Make call to Calendar API using auth token and todays date.
-* Add refresh button to clear and refetch events for the day.
-* Add calendar button to change selected date.
+✓ Add OAuth login
+✓ Make call to Calendar API using auth token
+    ✓ Use todays date as initial load
+    - Add calendar button to change selected date.
+    - Add refresh button to clear and refetch events for the day.
 
 https://developers.google.com/apis-explorer/?hl=en_US#p/calendar/v3/calendar.events.get
 

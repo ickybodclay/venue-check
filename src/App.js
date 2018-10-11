@@ -90,11 +90,22 @@ class App extends Component {
     })
   }
 
+  getCurrentDay() {
+    // TODO be able to change this, maybe add to state and change via calendar picker?
+    return new Date();
+  }
+
   responseGoogle = (response) => {
+    const now = this.getCurrentDay()
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) 
+    console.log(start.toISOString())
+    console.log(end.toISOString())
+
     const token = response.Zi.access_token
     const calendar  = encodeURIComponent("primary")
-    const timeMin   = encodeURIComponent("2018-10-26T00:00:00-04:00")
-    const timeMax   = encodeURIComponent("2018-10-26T23:00:00-04:00")
+    const timeMin   = encodeURIComponent(start.toISOString())
+    const timeMax   = encodeURIComponent(end.toISOString())
     const fields    = encodeURIComponent("items(end,location,start,summary)")
     const key       = encodeURIComponent(getGoogleApiKey())
     let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`
@@ -122,7 +133,6 @@ class App extends Component {
             scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
             onSuccess={this.responseGoogle}
             onFailure={this.responseGoogle}
-            isSignedIn="true"
           />
         </div>
       </div>
