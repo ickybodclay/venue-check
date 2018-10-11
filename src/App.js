@@ -92,6 +92,22 @@ class App extends Component {
     }
   }
 
+  addVenue(venue) {
+    let venueData = this.state.venueData;
+    venueData[venue] = {};
+    this.setState({
+      venueData: venueData
+    });
+  }
+
+  removeVenue(venue) {
+    let venueData = this.state.venueData;
+    delete venueData[venue];
+    this.setState({
+      venueData: venueData
+    });
+  }
+
   parseCalendarEventsResponse(response) {
     let eventsData = {};
     response.items.forEach(event => {
@@ -118,15 +134,12 @@ class App extends Component {
   }
 
   fetchEvents(date) {
-    //console.log("fetching events for " + date.toISOString());
     this.setState({
       eventsData : {}
     });
 
     const start = new Date(date.year(), date.month(), date.date(), 0, 0, 0, 0);
     const end = new Date(date.year(), date.month(), date.date() + 1, 0, 0, 0, 0);
-    console.log(start.toISOString());
-    console.log(end.toISOString());
 
     const token     = this.state.accessToken;
     const calendar  = encodeURIComponent("primary");
