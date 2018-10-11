@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import GoogleLogin from 'react-google-login';
 //import logo from './logo.svg';
 import './App.css';
 import apiConfig from './api_config.json'
 import oauthConfig from './client_secret.json'
-import gcalEventsData from './events.json' // FOR TESTING ONLY - Google API Explorer saved response json
 
 class App extends Component {
   constructor() {
@@ -64,36 +63,6 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    // requires OAuth
-    /*
-    const calendar  = encodeURIComponent("primary")
-    const timeMin   = encodeURIComponent("2018-10-26T00:00:00-04:00")
-    const timeMax   = encodeURIComponent("2018-10-26T23:00:00-04:00")
-    const fields    = encodeURIComponent("items(end,location,start,summary)")
-    const key       = encodeURIComponent(getGoogleApiKey())
-    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`
-    console.log(eventListRequest)
-    fetch(eventListRequest)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.parseCalendarEventsResponse(result)
-        },
-        (error) => {
-          // TODO handle error here
-          console.log(error)
-        }
-      );
-    //*/
-
-    //*
-    getCalendarEvents().then(response => {
-      this.parseCalendarEventsResponse(response)
-    });
-    //*/
-  }
-
   parseCalendarEventsResponse(response) {
     //console.log(response)
     let eventsData = {}
@@ -121,6 +90,26 @@ class App extends Component {
     })
   }
 
+  responseGoogle = (response) => {
+    const token = response.Zi.access_token
+    const calendar  = encodeURIComponent("primary")
+    const timeMin   = encodeURIComponent("2018-10-26T00:00:00-04:00")
+    const timeMax   = encodeURIComponent("2018-10-26T23:00:00-04:00")
+    const fields    = encodeURIComponent("items(end,location,start,summary)")
+    const key       = encodeURIComponent(getGoogleApiKey())
+    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`
+    fetch(eventListRequest, {method:'get', headers: new Headers({'Authorization' : 'Bearer ' + token})})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.parseCalendarEventsResponse(result)
+        },
+        (error) => {
+          console.log(error)
+        }
+      );
+  }
+
   render() {
     return (
       <div className="App">
@@ -130,17 +119,15 @@ class App extends Component {
           <GoogleLogin
             clientId={getGoogleClientId()}
             buttonText="Login"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
+            scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
+            onSuccess={this.responseGoogle}
+            onFailure={this.responseGoogle}
+            isSignedIn="true"
           />
         </div>
       </div>
     );
   }
-}
-
-async function getCalendarEvents() {
-  return gcalEventsData
 }
 
 function getGoogleApiKey() {
@@ -149,10 +136,6 @@ function getGoogleApiKey() {
 
 function getGoogleClientId() {
   return oauthConfig.web.client_id
-}
-
-const responseGoogle = (response) => {
-  console.log(response);
 }
 
 class VenueTable extends React.Component {
