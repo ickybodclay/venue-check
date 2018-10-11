@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import ReactDOM from 'react-dom';
-import GoogleLogin from 'react-google-login';
+import { GoogleLogin } from 'react-google-login';
+import { GoogleLogout } from 'react-google-login';
 //import logo from './logo.svg';
 import './App.css';
 import apiConfig from './api_config.json'
@@ -63,6 +63,20 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    this.showLoginButton()
+  }
+
+  showLoginButton() {
+    document.getElementById('googleLoginButton').hidden = false
+    document.getElementById('googleLogoutButton').hidden = true
+  }
+
+  showLogoutButton() {
+    document.getElementById('googleLoginButton').hidden = true
+    document.getElementById('googleLogoutButton').hidden = false
+  }
+
   parseCalendarEventsResponse(response) {
     //console.log(response)
     let eventsData = {}
@@ -114,6 +128,7 @@ class App extends Component {
       .then(
         (result) => {
           this.parseCalendarEventsResponse(result)
+          this.showLogoutButton()
         },
         (error) => {
           console.log(error)
@@ -121,18 +136,34 @@ class App extends Component {
       );
   }
 
+  logout = () => {
+    console.log("logout pressed");
+
+    this.setState({
+      eventsData : {}
+    });
+
+    this.showLoginButton();
+  }
+
   render() {
     return (
       <div className="App">
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
-        <div id="Login">
-          <br/>
+        <br/>
+        <div id="googleLoginButton">
           <GoogleLogin
             clientId={getGoogleClientId()}
             buttonText="Login"
             scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
             onSuccess={this.responseGoogle}
             onFailure={this.responseGoogle}
+          />
+        </div>
+        <div id="googleLogoutButton">
+          <GoogleLogout
+            buttonText="Logout"
+            onLogoutSuccess={this.logout}
           />
         </div>
       </div>
