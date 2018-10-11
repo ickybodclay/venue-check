@@ -292,7 +292,7 @@ class EventCell extends React.Component {
     const event = this.props.event
     if (event) {
       return (
-        <td>{event.name}</td>
+        <td className="Busy-cell">{event.name}</td>
       );
     }
 
