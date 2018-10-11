@@ -21,4 +21,7 @@ OAuth 2.0 scopes needed:
 https://www.googleapis.com/auth/calendar.readonly
 View your calendars
 
+calendar.events.list
 GET https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMax=2018-10-26T23%3A00%3A00-04%3A00&timeMin=2018-10-26T00%3A00%3A00-04%3A00&fields=items(end%2Clocation%2Cstart%2Csummary)&key={YOUR_API_KEY}
+
+GET https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMax=2018-10-26T23%3A00%3A00-04%3A00&timeMin=2018-10-26T00%3A00%3A00-04%3A00&fields=items(end%2Clocation%2Cstart%2Csummary)&key=AIzaSyDfmDuf77DVXbxugsxNGqzh8SCv0qwpJjA

@@ -3,6 +3,10 @@
 # dependencies
 /node_modules
 
+# secrets
+api_config.json
+client_secret.json
+
 # testing
 /coverage
 

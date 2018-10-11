@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
-import gcalEventsData from './events.json'
+import apiConfig from './api_config.json'
+import oauthConfig from './client_secret.json'
+import gcalEventsData from './events.json' // FOR TESTING ONLY - Google API Explorer saved response json
 import './App.css';
 //import ReactDOM from 'react-dom';
 
@@ -27,7 +29,7 @@ class App extends Component {
         "Ant Hall (Front Room)" : {
           address: "2320 Caniff St, Hamtramck, MI 48212",
         },
-        "Podcast Studio" : {
+        "Planet Ant Studio" : {
           address: "11831 Joseph Campau Ave, Hamtramck, MI 48212",
         }
       },
@@ -43,7 +45,7 @@ class App extends Component {
         "9am",
         "10am",
         "11am",
-        "12am",
+        "12pm",
         "1pm",
         "2pm",
         "3pm",
@@ -55,48 +57,67 @@ class App extends Component {
         "9pm",
         "10pm",
         "11pm",
-        "12pm"
+        "12am"
       ],
-      eventsData: {
-        "Planet Ant Black Box" : [
-          {
-            name: "Foo Test",
-            times: ["1am","2am","3am"]
-          },
-          {
-            name: "Bar Test",
-            times: ["7pm","8pm","9pm"]
-          }
-        ]
-      }
+      eventsData: { }
     }
   }
 
   componentDidMount() {
+    // requires OAuth
+    /*
+    const calendar  = encodeURIComponent("primary")
+    const timeMin   = encodeURIComponent("2018-10-26T00:00:00-04:00")
+    const timeMax   = encodeURIComponent("2018-10-26T23:00:00-04:00")
+    const fields    = encodeURIComponent("items(end,location,start,summary)")
+    const key       = encodeURIComponent(getGoogleApiKey())
+    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`
+    console.log(eventListRequest)
+    fetch(eventListRequest)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.parseCalendarEventsResponse(result)
+        },
+        (error) => {
+          // TODO handle error here
+          console.log(error)
+        }
+      );
+    //*/
+
+    //*
     getCalendarEvents().then(response => {
-      //console.log(response)
       this.parseCalendarEventsResponse(response)
     });
+    //*/
   }
 
   parseCalendarEventsResponse(response) {
-    // this.setState({
-    //   eventsData : {}
-    // });
-
+    console.log(response)
+    let eventsData = {}
     response.items.forEach(event => {
       console.log(event)
       if (event.location) {
-        //const venue = event.location
-        //const eventName = event.summary
+        const venue = event.location.split(",")[0]
+        const eventName = event.summary
         if (event.start && event.end) {
-          // TODO figure out times for given range
-          //const startTime = event.start.dateTime
-          //const endTime = event.end.dateTime
-          //newEvent.eventName = eventName
-        } 
+          const startTime = new Date(event.start.dateTime)
+          const endTime = new Date(event.end.dateTime)
+          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1)
+
+          if (!eventsData[venue]) {
+            eventsData[venue] = []
+          }
+
+          eventsData[venue].push({name: eventName, times: times})
+        }
       }   
     });
+
+    this.setState({
+      eventsData : eventsData
+    })
   }
 
   render() {
@@ -112,20 +133,27 @@ async function getCalendarEvents() {
   return gcalEventsData
 }
 
+function getGoogleApiKey() {
+  return apiConfig.key
+}
+
+function getGoogleClientId() {
+  return oauthConfig.web.client_id
+}
+
 class VenueTable extends React.Component {
   render() {
     const venues = Object.keys(this.props.venueData)
     let columns = venues.map(venueName => {
       return <VenueCell key={venueName} venueName={venueName} />
     });
-    console.log(columns)
 
     const rows = []
-    for (let i = 0; i < this.props.timeData.length; i++) {
+    for (let i = 0; i < this.props.timeData.length; i++) { // row
       let children = []
       const time = this.props.timeData[i]
       children.push(<TimeCell key={i} time={this.props.timeData[i]} />)
-      for (let j = 0; j < venues.length; j++) {
+      for (let j = 0; j < venues.length; j++) { // column
         const venue = venues[j]
         if (this.props.eventsData.hasOwnProperty(venue)) {
           let timeFound = false
