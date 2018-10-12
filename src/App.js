@@ -74,9 +74,9 @@ class App extends Component {
       ],
       eventsData: { },
       accessToken: "",
-      currentDate: moment()
+      currentDate: moment(),
+      showPopup: false
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -93,27 +93,17 @@ class App extends Component {
     document.getElementById('googleLogoutButton').hidden = false;
   }
 
-  handleChange(date) {
-    this.setState({
-      currentDate: date
-    });
-
-    if (this.state.accessToken !== "") {
-      this.fetchEvents(date);
-    }
-  }
-
   addVenue(venue) {
-    let venueData = this.state.venueData;
-    venueData[venue] = {};
+    let venueData = [...this.state.venueData];
+    venueData.push(venue)
     this.setState({
       venueData: venueData
     });
   }
 
-  removeVenue(venue) {
-    let venueData = this.state.venueData;
-    delete venueData[venue];
+  removeVenue(index) {
+    let venueData = [...this.state.venueData];
+    venueData.splice(index, 1);
     this.setState({
       venueData: venueData
     });
@@ -172,6 +162,16 @@ class App extends Component {
       );
   }
 
+  handleDateChange = (date) => {
+    this.setState({
+      currentDate: date
+    });
+
+    if (this.state.accessToken !== "") {
+      this.fetchEvents(date);
+    }
+  }
+
   responseGoogle = (response) => {
     this.setState({
       accessToken: response.Zi.access_token
@@ -187,8 +187,26 @@ class App extends Component {
     this.showLoginButton();
   }
 
-  addVenueClicked() {
-    console.log("add venue button clicked");
+  addVenueClicked = () => {
+    this.togglePopup();
+  }
+
+  removeVenueClicked = () => {
+    if (this.state.venueData.length > 0) {
+      this.removeVenue(this.state.venueData.length - 1);
+    }
+  }
+
+  addVenuePopupSubmitted(venue) {
+    console.log(venue)
+    this.addVenue(venue);
+    this.togglePopup();
+  }
+
+  togglePopup() {
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
   }
 
   render() {
@@ -203,14 +221,25 @@ class App extends Component {
               <tbody>
                 <tr>
                   <td>
-                    <h3>Date</h3>
+                    <button className="add" onClick={this.addVenueClicked}>
+                      <span role="img" aria-label="plus">➕</span>Add Venue
+                    </button>
+                  </td>
+                  <td>
                     <DatePicker
                       selected={this.state.currentDate}
-                      onChange={this.handleChange}
+                      onChange={this.handleDateChange}
+                      className="date-picker"
+                      peekNextMonth
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
                     />
                   </td>
                   <td>
-                    <button onClick={this.addVenueClicked}>Add Venue</button>
+                    <button className="remove" onClick={this.removeVenueClicked}>
+                      <span role="img" aria-label="trashcan">🗑️ </span> Remove Venue
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -238,6 +267,14 @@ class App extends Component {
         </div>
         <br/>
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
+        {
+          this.state.showPopup ? 
+          <Popup
+            addClicked={this.addVenuePopupSubmitted.bind(this)}
+            closePopup={this.togglePopup.bind(this)}
+          />
+          : null
+        }
       </div>
     );
   }
@@ -283,7 +320,7 @@ class VenueTable extends React.Component {
     });
 
     return (
-      <table width="95%" align="center">
+      <table className="venue-table" align="center">
         <thead>
           <tr><th />{columns}</tr>
         </thead>
@@ -324,11 +361,47 @@ class EventCell extends React.Component {
     const event = this.props.event
     if (event) {
       return (
-        <td className="Busy-cell">{event.name}</td>
+        <td className="busy-cell">{event.name}</td>
       );
     }
 
     return (<td className="event" />)
+  }
+}
+
+class Popup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      address: ""
+    };
+  }
+
+  handleNameChange = (event) => {
+    this.setState({name: event.target.value});
+  }
+
+  handleSubmit = (event) => {
+    console.log(this.state.name);
+    this.props.addClicked({
+      name: this.state.name
+    });
+  }
+
+  render() {
+    return (
+      <div className='popup'>
+        <div className='popup_inner'>
+          <h1>Add Venue</h1>
+          <input className="venue-name-input" type="text" value={this.state.name} onChange={this.handleNameChange} />
+          <br/><br/>
+          <button className="add" onClick={this.handleSubmit}>Add</button>
+          <br/><br/>
+          <button className="remove" onClick={this.props.closePopup}>Cancel</button>
+        </div>
+      </div>
+    );
   }
 }
 

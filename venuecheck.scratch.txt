@@ -9,8 +9,9 @@ TODO
     ✓ Use todays date as initial load
     ✓ Add calendar button to change selected date.
     - Add refresh button to clear and refetch events for the day.
-* Add way to add/remove locations
-    - Save previously added locations to cookie
+✓ Add way to add/remove locations
+    - Save/Load previously added locations to local storage
+* Local storage save isSignedIn status (or just save accessToken and check for that)
 * Setup with gh-pages so a production version can be running for people to test.
 * Styling
 
