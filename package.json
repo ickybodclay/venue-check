@@ -2,7 +2,7 @@
   "name": "venue-check",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ickybodclay.github.io/venue-check/",
+  "homepage": "https://venue-check.herokuapp.com/",
   "dependencies": {
     "gh-pages": "^2.0.1",
     "moment": "^2.22.2",
@@ -10,14 +10,15 @@
     "react-datepicker": "^1.6.0",
     "react-dom": "^16.5.2",
     "react-google-login": "^3.2.1",
-    "react-scripts": "1.1.5"
+    "react-scripts": "1.1.5",
+    "serve": "^10.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
+    "start": "serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "predeploy" : "npm run build",
-    "deploy" : "gh-pages -d build"
+    "heroku-postbuild": "npm run build"
   }
 }
