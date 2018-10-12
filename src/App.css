@@ -7,6 +7,11 @@
   height: 80px;
 } */
 
+/* @keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+} */
+
 .App-header {
   background-color: #222;
   height: 150px;
@@ -29,14 +34,14 @@
 #right {width: 25%;}
 
 .Busy-cell {
-  background-color: yellow
+  background-color: yellow;
+  border: 1px solid black;
 }
 
-/* @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-} */
+table {
+  border-collapse: collapse;
+}
 
-table, th, td {
+td.event {
   border: 1px solid black;
 }

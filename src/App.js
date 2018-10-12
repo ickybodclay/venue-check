@@ -187,6 +187,10 @@ class App extends Component {
     this.showLoginButton();
   }
 
+  addVenueClicked() {
+    console.log("add venue button clicked");
+  }
+
   render() {
     return (
       <div className="App">
@@ -195,11 +199,23 @@ class App extends Component {
             <h1>Venue Check</h1>
           </div>
           <div id="middle">
-            <h3>Date</h3>
-            <DatePicker
-              selected={this.state.currentDate}
-              onChange={this.handleChange}
-            />
+            <table width="100%">
+              <tbody>
+                <tr>
+                  <td>
+                    <h3>Date</h3>
+                    <DatePicker
+                      selected={this.state.currentDate}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                  <td>
+                    <button onClick={this.addVenueClicked}>Add Venue</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
           </div>
           <div id="right">
             <br/>
@@ -267,7 +283,7 @@ class VenueTable extends React.Component {
     });
 
     return (
-      <table width="100%">
+      <table width="95%" align="center">
         <thead>
           <tr><th />{columns}</tr>
         </thead>
@@ -312,7 +328,7 @@ class EventCell extends React.Component {
       );
     }
 
-    return (<td />)
+    return (<td className="event" />)
   }
 }
 
