@@ -5,8 +5,6 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
-import apiConfig from './api_config.json'
-import oauthConfig from './client_secret.json'
 
 class App extends Component {
   constructor() {
@@ -281,11 +279,11 @@ class App extends Component {
 }
 
 function getGoogleApiKey() {
-  return apiConfig.key
+  return process.env.REACT_APP_GOOGLE_API_KEY;
 }
 
 function getGoogleClientId() {
-  return oauthConfig.web.client_id
+  return process.env.REACT_APP_GOOGLE_CLIENT_ID;
 }
 
 class VenueTable extends React.Component {
