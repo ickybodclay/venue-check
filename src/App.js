@@ -12,29 +12,40 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      venueData: {
-        "Planet Ant Black Box" : {
+      venueData: [
+        {
+          name: "Planet Ant Black Box",
           address: "2357 Caniff St, Hamtramck, MI 48212"
         },
-        "Planet Ant Black Box (2nd Floor)" : {
+        {
+          name: "Planet Ant Black Box (2nd Floor)",
           address: "2357 Caniff St, Hamtramck, MI 48212"
         },
-        "Ant Hall (Main Stage)" : {
-          address: "2320 Caniff St, Hamtramck, MI 48212",
+        {
+          name: "Ant Hall (Main Stage)",
+          address: "2320 Caniff St, Hamtramck, MI 48212"
         },
-        "Ant Hall (Green Room)" : {
-          address: "2320 Caniff St, Hamtramck, MI 48212",
+        {
+          name: "Ant Hall (Green Room)",
+          address: "2320 Caniff St, Hamtramck, MI 48212"
         },
-        "Ant Hall (New Bros)" : {
-          address: "2320 Caniff St, Hamtramck, MI 48212",
+        {
+          name: "Ant Hall (New Bros)",
+          address: "2320 Caniff St, Hamtramck, MI 48212"
         },
-        "Ant Hall (Front Room)" : {
-          address: "2320 Caniff St, Hamtramck, MI 48212",
+        {
+          name: "Ant Hall (Front Room)",
+          address: "2320 Caniff St, Hamtramck, MI 48212"
         },
-        "Planet Ant Studio" : {
-          address: "11831 Joseph Campau Ave, Hamtramck, MI 48212",
+        {
+          name: "Ghost Light",
+          address: "2314 Caniff St, Hamtramck, MI 48212, USA"
+        },
+        {
+          name: "Planet Ant Studio",
+          address: "11831 Joseph Campau Ave, Hamtramck, MI 48212"
         }
-      },
+      ],
       timeData: [
         "1am",
         "2am",
@@ -179,29 +190,38 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <br/>
-        <DatePicker
-          selected={this.state.currentDate}
-          onChange={this.handleChange}
-        />
+        <div id="container">
+          <div id="left">
+            <h1>Venue Check</h1>
+          </div>
+          <div id="middle">
+            <h3>Date</h3>
+            <DatePicker
+              selected={this.state.currentDate}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div id="right">
+            <br/>
+            <div id="googleLoginButton">
+              <GoogleLogin
+                clientId={getGoogleClientId()}
+                buttonText="Login"
+                scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
+                onSuccess={this.responseGoogle}
+                onFailure={this.responseGoogle}
+              />
+            </div>
+            <div id="googleLogoutButton">
+              <GoogleLogout
+                buttonText="Logout"
+                onLogoutSuccess={this.logout}
+              />
+            </div>
+          </div>
+        </div>
         <br/>
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
-        <br/>
-        <div id="googleLoginButton">
-          <GoogleLogin
-            clientId={getGoogleClientId()}
-            buttonText="Login"
-            scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
-            onSuccess={this.responseGoogle}
-            onFailure={this.responseGoogle}
-          />
-        </div>
-        <div id="googleLogoutButton">
-          <GoogleLogout
-            buttonText="Logout"
-            onLogoutSuccess={this.logout}
-          />
-        </div>
       </div>
     );
   }
@@ -217,38 +237,34 @@ function getGoogleClientId() {
 
 class VenueTable extends React.Component {
   render() {
-    const venues = Object.keys(this.props.venueData)
-    let columns = venues.map(venueName => {
-      return <VenueCell key={venueName} venueName={venueName} />
+    let columns = this.props.venueData.map(venue => {
+      return <VenueCell key={venue.name} venueName={venue.name} />
     });
 
-    const rows = []
-    for (let i = 0; i < this.props.timeData.length; i++) { // row
-      let children = []
-      const time = this.props.timeData[i]
-      children.push(<TimeCell key={i} time={this.props.timeData[i]} />)
-      for (let j = 0; j < venues.length; j++) { // column
-        const venue = venues[j]
-        if (this.props.eventsData.hasOwnProperty(venue)) {
-          let timeFound = false
-          this.props.eventsData[venue].forEach(event => {
+    let rows = this.props.timeData.map(time => {
+      let children = [];
+      children.push(<TimeCell key={time} time={time} />);
+      let events = this.props.venueData.map(venue => {
+        if (this.props.eventsData.hasOwnProperty(venue.name)) {
+          let eventFound = null
+          this.props.eventsData[venue.name].forEach(event => {
             if(event.times.includes(time)) {
-              children.push(<EventCell key={time + j} event={event} />)
-              timeFound = true
-              return;
+              eventFound = event
             }
           });
-
-          if (!timeFound) {
-            children.push(<EventCell key={time + j} event={null} />)
+          if (eventFound) {
+            return <EventCell key={venue.name + time} event={eventFound} />
           }
+          return <EventCell key={venue.name + time} event={null} />
         }
         else {
-          children.push(<EventCell key={time + j} event={null} />)
+          return <EventCell key={venue.name + time} event={null} />
         }
-      }
-      rows.push(<TimeRow key={i} children={children} />)
-    }
+      });
+      children.push(events);
+
+      return <TimeRow key={time} children={children} />
+    });
 
     return (
       <table width="100%">

@@ -11,3 +11,9 @@ TODO
     - Add refresh button to clear and refetch events for the day.
 * Add way to add/remove locations
     - Save previously added locations to cookie
+* Setup with gh-pages so a production version can be running for people to test.
+* Styling
+
+EXPIRIMENTAL TODO
+* Add support for multiple calendars
+    - Does this support 'Other calendars' I subsribe to?
