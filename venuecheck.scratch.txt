@@ -10,10 +10,9 @@ TODO
     ✓ Add calendar button to change selected date.
     - Add refresh button to clear and refetch events for the day.
 ✓ Add way to add/remove locations
-    - Save/Load previously added locations to local storage
-* Local storage save isSignedIn status (or just save accessToken and check for that)
-* Setup with gh-pages so a production version can be running for people to test.
-* Styling
+    ✓ Save/Load previously added locations to local storage
+✓ Setup "Production" version on Heroku for people to test latest stable.
+* UI/UX updates and improvements
 
 EXPIRIMENTAL TODO
 * Add support for multiple calendars

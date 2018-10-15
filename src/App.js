@@ -10,40 +10,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      venueData: [
-        {
-          name: "Planet Ant Black Box",
-          address: "2357 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Planet Ant Black Box (2nd Floor)",
-          address: "2357 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Ant Hall (Main Stage)",
-          address: "2320 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Ant Hall (Green Room)",
-          address: "2320 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Ant Hall (New Bros)",
-          address: "2320 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Ant Hall (Front Room)",
-          address: "2320 Caniff St, Hamtramck, MI 48212"
-        },
-        {
-          name: "Ghost Light",
-          address: "2314 Caniff St, Hamtramck, MI 48212, USA"
-        },
-        {
-          name: "Planet Ant Studio",
-          address: "11831 Joseph Campau Ave, Hamtramck, MI 48212"
-        }
-      ],
+      venueData: [],
       timeData: [
         "1am",
         "2am",
@@ -78,7 +45,33 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.hydrateStateWithLocalStorage();
     this.showLoginButton();
+
+    window.addEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+
+    this.saveStateToLocalStorage();
+  }
+
+  saveStateToLocalStorage() {
+    localStorage.setItem('venueData', JSON.stringify(this.state.venueData));
+  }
+
+  hydrateStateWithLocalStorage() {
+    if (localStorage.hasOwnProperty('venueData')) {
+      const venueData = JSON.parse(localStorage.getItem('venueData'));
+      this.setState({venueData: venueData});
+    }
   }
 
   showLoginButton() {
@@ -253,6 +246,7 @@ class App extends Component {
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}
+                isSignedIn="true"
               />
             </div>
             <div id="googleLogoutButton">
