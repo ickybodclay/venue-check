@@ -23,6 +23,17 @@
   font-size: 1.5em;
 }
 
+body {
+  background-color: #222;
+}
+
+h1 {
+  color: deeppink;
+  font-size: 30px;
+  display: inline;
+  vertical-align: center;
+}
+
 .App-intro {
   font-size: large;
 }
@@ -35,7 +46,7 @@
 
 .busy-cell {
   background-color: yellow;
-  border: 1px solid black;
+  border: 1px solid white;
 }
 
 table {
@@ -46,8 +57,23 @@ table {
   width: 95%;  
 }
 
+th {
+  color: white;
+  padding: 10px;
+}
+
 td.event {
-  border: 1px solid black;
+  border: 1px solid white;
+  display: table-cell;
+  width: 150px;
+}
+
+td.time-cell {
+  width: 30px;
+  font-weight: bold;
+  color: white;
+  padding: 10px;
+  text-align: left;
 }
 
 .date-picker {

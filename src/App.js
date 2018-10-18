@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
+import VenueTable from './VenueTable';
 
 class App extends Component {
   constructor() {
@@ -93,6 +94,7 @@ class App extends Component {
   }
 
   removeVenue(index) {
+    // TODO instead of removing last added, toggle visibility of 'X' buttons for all venues
     let venueData = [...this.state.venueData];
     venueData.splice(index, 1);
     this.setState({
@@ -246,7 +248,7 @@ class App extends Component {
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}
-                isSignedIn="true"
+                //isSignedIn="true"
               />
             </div>
             <div id="googleLogoutButton">
@@ -261,7 +263,7 @@ class App extends Component {
         <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
         {
           this.state.showPopup ? 
-          <Popup
+          <AddVenuePopup
             addClicked={this.addVenuePopupSubmitted.bind(this)}
             closePopup={this.togglePopup.bind(this)}
           />
@@ -282,88 +284,7 @@ function getGoogleClientId() {
   return process.env.REACT_APP_GOOGLE_CLIENT_ID;
 }
 
-class VenueTable extends React.Component {
-  render() {
-    let columns = this.props.venueData.map(venue => {
-      return <VenueCell key={venue.name} venueName={venue.name} />
-    });
-
-    let rows = this.props.timeData.map(time => {
-      let children = [];
-      children.push(<TimeCell key={time} time={time} />);
-      let events = this.props.venueData.map(venue => {
-        if (this.props.eventsData.hasOwnProperty(venue.name)) {
-          let eventFound = null
-          this.props.eventsData[venue.name].forEach(event => {
-            if(event.times.includes(time)) {
-              eventFound = event
-            }
-          });
-          if (eventFound) {
-            return <EventCell key={venue.name + time} event={eventFound} />
-          }
-          return <EventCell key={venue.name + time} event={null} />
-        }
-        else {
-          return <EventCell key={venue.name + time} event={null} />
-        }
-      });
-      children.push(events);
-
-      return <TimeRow key={time} children={children} />
-    });
-
-    return (
-      <table className="venue-table" align="center">
-        <thead>
-          <tr><th />{columns}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
-    );
-  }
-}
-
-class TimeRow extends React.Component {
-  render() {
-    return (
-      <tr>{this.props.children}</tr>
-    )
-  }
-}
-
-class VenueCell extends React.Component {
-  render() {
-    const venueName = this.props.venueName
-    return (
-      <th>{venueName}</th>
-    );
-  }
-}
-
-class TimeCell extends React.Component {
-  render() {
-    const time = this.props.time
-    return (
-      <td>{time}</td>
-    );
-  }
-}
-
-class EventCell extends React.Component {
-  render() {
-    const event = this.props.event
-    if (event) {
-      return (
-        <td className="busy-cell">{event.name}</td>
-      );
-    }
-
-    return (<td className="event" />)
-  }
-}
-
-class Popup extends React.Component {
+class AddVenuePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -387,7 +308,7 @@ class Popup extends React.Component {
     return (
       <div className='popup'>
         <div className='popup_inner'>
-          <h1>Add Venue</h1>
+          <h2>Add Venue</h2>
           <input className="venue-name-input" type="text" value={this.state.name} onChange={this.handleNameChange} />
           <br/><br/>
           <button className="add" onClick={this.handleSubmit}>Add</button>

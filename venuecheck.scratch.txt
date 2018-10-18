@@ -13,6 +13,14 @@ TODO
     ✓ Save/Load previously added locations to local storage
 ✓ Setup "Production" version on Heroku for people to test latest stable.
 * UI/UX updates and improvements
+    - improve removing venue
+    - improve adding venue
+    - improve displaying cells
+        - event
+            - combine cells for long event
+        - venue
+            - show picture of venue from Google Maps API
+        - time (allow half hour increments?)
 
 EXPIRIMENTAL TODO
 * Add support for multiple calendars
