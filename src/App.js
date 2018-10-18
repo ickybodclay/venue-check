@@ -251,7 +251,7 @@ class App extends Component {
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}
-                //isSignedIn="true"
+                isSignedIn={process.env.REACT_APP_KMSI}
               />
             </div>
             <div id="googleLogoutButton">
