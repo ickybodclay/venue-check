@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
-import { VenueTable } from './VenueTable';
+import VenueTable from './VenueTable';
 
 class App extends Component {
   constructor() {
