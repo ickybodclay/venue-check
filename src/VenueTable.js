@@ -1,9 +1,32 @@
 import React, { Component } from 'react';
 
 class VenueTable extends Component {
+  constructor() {
+    super();
+    this.state = {
+      showDelete: false
+    };
+  }
+
+  toggleVenueDelete() {
+    this.setState({
+      showDelete: !this.state.showDelete
+    });
+  }
+
+  handleDeleteClicked(index) {
+    this.props.handleRemoveVenue(index);
+    this.toggleVenueDelete();
+  }
+
   render() {
-    let columns = this.props.venueData.map(venue => {
-      return <VenueCell key={venue.name} venueName={venue.name} />
+    let columns = this.props.venueData.map((venue, index) => {
+      return <VenueCell 
+        key={venue.name} 
+        venueName={venue.name} 
+        venueIndex={index} 
+        showDelete={this.state.showDelete}
+        onDeleteClicked={this.handleDeleteClicked.bind(this)} />
     });
 
     let rows = this.props.timeData.map(time => {
@@ -52,9 +75,18 @@ class TimeRow extends Component {
 
 class VenueCell extends Component {
   render() {
-    const venueName = this.props.venueName
+    const venueIndex = this.props.venueIndex;
     return (
-      <th>{venueName}</th>
+      <th>
+        {this.props.venueName}&nbsp;
+        {this.props.showDelete && (
+          <button 
+            className="removeVenue" 
+            onClick={() => this.props.onDeleteClicked(venueIndex)}>
+            X
+          </button>
+        )}
+      </th>
     );
   }
 }

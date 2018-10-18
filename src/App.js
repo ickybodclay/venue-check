@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import './App.css';
-import VenueTable from './VenueTable';
+import { VenueTable } from './VenueTable';
 
 class App extends Component {
   constructor() {
@@ -43,6 +43,7 @@ class App extends Component {
       currentDate: moment(),
       showPopup: false
     };
+    this.venueTable = React.createRef();
   }
 
   componentDidMount() {
@@ -94,7 +95,6 @@ class App extends Component {
   }
 
   removeVenue(index) {
-    // TODO instead of removing last added, toggle visibility of 'X' buttons for all venues
     let venueData = [...this.state.venueData];
     venueData.splice(index, 1);
     this.setState({
@@ -186,7 +186,7 @@ class App extends Component {
 
   removeVenueClicked = () => {
     if (this.state.venueData.length > 0) {
-      this.removeVenue(this.state.venueData.length - 1);
+      this.venueTable.current.toggleVenueDelete();
     }
   }
 
@@ -214,7 +214,9 @@ class App extends Component {
               <tbody>
                 <tr>
                   <td>
-                    <button className="add" onClick={this.addVenueClicked}>
+                    <button 
+                      className="add" 
+                      onClick={this.addVenueClicked}>
                       <span role="img" aria-label="plus">➕</span>Add Venue
                     </button>
                   </td>
@@ -230,14 +232,15 @@ class App extends Component {
                     />
                   </td>
                   <td>
-                    <button className="remove" onClick={this.removeVenueClicked}>
+                    <button 
+                      className="remove" 
+                      onClick={this.removeVenueClicked}>
                       <span role="img" aria-label="trashcan">🗑️ </span> Remove Venue
                     </button>
                   </td>
                 </tr>
               </tbody>
             </table>
-            
           </div>
           <div id="right">
             <br/>
@@ -260,7 +263,13 @@ class App extends Component {
           </div>
         </div>
         <br/>
-        <VenueTable venueData={this.state.venueData} timeData={this.state.timeData} eventsData={this.state.eventsData} />
+        <VenueTable 
+          ref={this.venueTable}
+          venueData={this.state.venueData} 
+          timeData={this.state.timeData} 
+          eventsData={this.state.eventsData} 
+          handleRemoveVenue={this.removeVenue.bind(this)}
+        />
         {
           this.state.showPopup ? 
           <AddVenuePopup
@@ -309,11 +318,23 @@ class AddVenuePopup extends Component {
       <div className='popup'>
         <div className='popup_inner'>
           <h2>Add Venue</h2>
-          <input className="venue-name-input" type="text" value={this.state.name} onChange={this.handleNameChange} />
+          <input 
+            className="venue-name-input" 
+            type="text" 
+            value={this.state.name} 
+            onChange={this.handleNameChange} />
           <br/><br/>
-          <button className="add" onClick={this.handleSubmit}>Add</button>
+          <button 
+            className="add" 
+            onClick={this.handleSubmit}>
+            Add
+          </button>
           <br/><br/>
-          <button className="remove" onClick={this.props.closePopup}>Cancel</button>
+          <button 
+            className="remove" 
+            onClick={this.props.closePopup}>
+            Cancel
+          </button>
         </div>
       </div>
     );
