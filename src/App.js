@@ -41,7 +41,8 @@ class App extends Component {
       eventsData: { },
       accessToken: "",
       currentDate: moment(),
-      showPopup: false
+      showPopup: false,
+      removeBtnBgColor: "red"
     };
     this.venueTable = React.createRef();
   }
@@ -187,6 +188,12 @@ class App extends Component {
   removeVenueClicked = () => {
     if (this.state.venueData.length > 0) {
       this.venueTable.current.toggleVenueDelete();
+      if (this.state.removeBtnBgColor === "darkgray") {
+        this.setState({removeBtnBgColor:"red"})
+      }
+      else {
+        this.setState({removeBtnBgColor:"darkgray"})
+      }
     }
   }
 
@@ -233,7 +240,8 @@ class App extends Component {
                   </td>
                   <td>
                     <button 
-                      className="remove" 
+                      className="remove"
+                      style={{backgroundColor:this.state.removeBtnBgColor}}
                       onClick={this.removeVenueClicked}>
                       <span role="img" aria-label="trashcan">🗑️ </span> Remove Venue
                     </button>
@@ -251,7 +259,7 @@ class App extends Component {
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
                 onSuccess={this.responseGoogle}
                 onFailure={this.responseGoogle}
-                isSignedIn={process.env.REACT_APP_KMSI}
+                isSignedIn={process.env.REACT_APP_KMSI === "true"}
               />
             </div>
             <div id="googleLogoutButton">
