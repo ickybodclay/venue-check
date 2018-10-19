@@ -103,31 +103,6 @@ class App extends Component {
     });
   }
 
-  parseCalendarEventsResponse(response) {
-    let eventsData = {};
-    response.items.forEach(event => {
-      if (event.location) {
-        const venue = event.location.split(",")[0];
-        const eventName = event.summary;
-        if (event.start && event.end) {
-          const startTime = new Date(event.start.dateTime);
-          const endTime = new Date(event.end.dateTime);
-          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1);
-
-          if (!eventsData[venue]) {
-            eventsData[venue] = [];
-          }
-
-          eventsData[venue].push({name: eventName, times: times});
-        }
-      }   
-    });
-
-    this.setState({
-      eventsData : eventsData
-    });
-  }
-
   fetchEvents(date) {
     this.setState({
       eventsData : {}
@@ -156,6 +131,31 @@ class App extends Component {
       );
   }
 
+  parseCalendarEventsResponse(response) {
+    let eventsData = {};
+    response.items.forEach(event => {
+      if (event.location) {
+        const venue = event.location.split(",")[0];
+        const eventName = event.summary;
+        if (event.start && event.end) {
+          const startTime = new Date(event.start.dateTime);
+          const endTime = new Date(event.end.dateTime);
+          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1);
+
+          if (!eventsData[venue]) {
+            eventsData[venue] = [];
+          }
+
+          eventsData[venue].push({name: eventName, times: times});
+        }
+      }   
+    });
+
+    this.setState({
+      eventsData : eventsData
+    });
+  }
+
   handleDateChange = (date) => {
     this.setState({
       currentDate: date
@@ -166,14 +166,14 @@ class App extends Component {
     }
   }
 
-  responseGoogle = (response) => {
+  handleGoogleLoginResponse = (response) => {
     this.setState({
       accessToken: response.Zi.access_token
     })
     this.fetchEvents(this.state.currentDate);
   }
 
-  logout = () => {
+  handleLogout = () => {
     this.setState({
       eventsData : {}
     });
@@ -257,15 +257,15 @@ class App extends Component {
                 clientId={getGoogleClientId()}
                 buttonText="Login"
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
-                onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
+                onSuccess={this.handleGoogleLoginResponse}
+                onFailure={this.handleGoogleLoginResponse}
                 isSignedIn={process.env.REACT_APP_KMSI === "true"}
               />
             </div>
             <div id="googleLogoutButton">
               <GoogleLogout
                 buttonText="Logout"
-                onLogoutSuccess={this.logout}
+                onLogoutSuccess={this.handleLogout}
               />
             </div>
           </div>
