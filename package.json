@@ -5,9 +5,9 @@
   "homepage": "https://venue-check.herokuapp.com/",
   "dependencies": {
     "moment": "^2.22.2",
-    "react": "^16.5.2",
-    "react-datepicker": "^1.6.0",
-    "react-dom": "^16.5.2",
+    "react": "^16.6.0",
+    "react-datepicker": "^1.8.0",
+    "react-dom": "^16.6.0",
     "react-google-login": "^3.2.1",
     "react-scripts": "1.1.5",
     "serve": "^10.0.2"

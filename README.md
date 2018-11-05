@@ -4,9 +4,9 @@ Easily check what venues from your Google Calendar are available at a glance.
 
 ## Getting Started
 
-Before attempting to run, you'll need to set some environment variables.  One way to easily do this is to create a .env.local file:
+Before attempting to run, you'll need to set some environment variables.  One way to easily do this is to create a __.env.local__ file:
 
-`.env.local`
+__.env.local__
 ```
 REACT_APP_GOOGLE_API_KEY=<YOUR_GOOGLE_API_KEY_HERE>
 REACT_APP_GOOGLE_CLIENT_ID=<YOUR_GOOGLE_CLIENT_ID_HERE>
