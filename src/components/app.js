@@ -9,6 +9,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 //components
 import { VenueTable } from "./venueTable";
+import { AddVenuePopup } from "./addVenuePopup";
+
+//Utility
+import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
 
 export class App extends Component {
   constructor() {
@@ -305,63 +309,6 @@ export class App extends Component {
             closePopup={this.togglePopup.bind(this)}
           />
         ) : null}
-      </div>
-    );
-  }
-}
-
-function getGoogleApiKey() {
-  console.log("Google API key: " + process.env.REACT_APP_GOOGLE_API_KEY);
-  return process.env.REACT_APP_GOOGLE_API_KEY;
-}
-
-function getGoogleClientId() {
-  console.log("Google Client ID: " + process.env.REACT_APP_GOOGLE_CLIENT_ID);
-  return process.env.REACT_APP_GOOGLE_CLIENT_ID;
-}
-
-class AddVenuePopup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      address: ""
-    };
-  }
-
-  handleNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
-
-  handleSubmit = event => {
-    console.log(this.state.name);
-    this.props.addClicked({
-      name: this.state.name
-    });
-  };
-
-  render() {
-    return (
-      <div className="popup">
-        <div className="popup_inner">
-          <h2>Add Venue</h2>
-          <input
-            className="venue-name-input"
-            type="text"
-            value={this.state.name}
-            onChange={this.handleNameChange}
-          />
-          <br />
-          <br />
-          <button className="add" onClick={this.handleSubmit}>
-            Add
-          </button>
-          <br />
-          <br />
-          <button className="remove" onClick={this.props.closePopup}>
-            Cancel
-          </button>
-        </div>
       </div>
     );
   }
