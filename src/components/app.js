@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
-import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 //components
@@ -115,11 +114,11 @@ export class App extends Component {
       eventsData: {}
     });
 
-    const start = new Date(date.year(), date.month(), date.date(), 0, 0, 0, 0);
+    const start = new Date(date.getYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
     const end = new Date(
-      date.year(),
-      date.month(),
-      date.date() + 1,
+      date.getYear(),
+      date.getMonth(),
+      date.getDate() + 1,
       0,
       0,
       0,
