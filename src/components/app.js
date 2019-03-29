@@ -3,7 +3,7 @@ import React, { Component } from "react";
 //libraries
 import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
-//import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -47,7 +47,7 @@ export class App extends Component {
       ],
       eventsData: {},
       accessToken: "",
-      currentDate: moment(),
+      currentDate: new Date(),
       showPopup: false,
       removeBtnBgColor: "red"
     };
@@ -249,15 +249,15 @@ export class App extends Component {
                     </button>
                   </td>
                   <td>
-                    {/* <DatePicker
-                        selected={this.state.currentDate}
-                        onChange={this.handleDateChange}
-                        className="date-picker"
-                        peekNextMonth
-                        showMonthDropdown
-                        showYearDropdown
-                        dropdownMode="select"
-                      /> */}
+                    <DatePicker
+                      selected={this.state.currentDate}
+                      onChange={this.handleDateChange}
+                      className="date-picker"
+                      peekNextMonth
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                    />
                   </td>
                   <td>
                     <button
