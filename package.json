@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "https://venue-check.herokuapp.com/",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
@@ -16,6 +19,8 @@
     "css-loader": "^2.1.1",
     "dotenv": "4.0.0",
     "dotenv-expand": "4.2.0",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
     "eslint": "4.10.0",
     "eslint-config-react-app": "^2.1.0",
     "eslint-loader": "1.9.0",
@@ -39,6 +44,7 @@
     "react-dev-utils": "^5.0.2",
     "react-dom": "^16.8.6",
     "react-google-login": "^3.2.1",
+    "react-test-renderer": "^16.8.6",
     "resolve": "1.6.0",
     "serve": "^10.1.2",
     "style-loader": "0.19.0",
@@ -57,11 +63,15 @@
     "heroku-postbuild": "npm run build"
   },
   "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,mjs}"
     ],
     "setupFiles": [
-      "<rootDir>/config/polyfills.js"
+      "<rootDir>/config/polyfills.js",
+      "<rootDir>/src/__mocks__/client.js"
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
@@ -92,7 +102,11 @@
   },
   "babel": {
     "presets": [
-      "react-app"
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
     ]
   },
   "eslintConfig": {

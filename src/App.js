@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { GoogleLogin } from 'react-google-login';
-import { GoogleLogout } from 'react-google-login';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css';
-import './App.css';
-import VenueTable from './VenueTable';
+import React, { Component } from "react";
+import { GoogleLogin } from "react-google-login";
+import { GoogleLogout } from "react-google-login";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+import "react-datepicker/dist/react-datepicker.css";
+import "./App.css";
+import VenueTable from "./VenueTable";
 
 class App extends Component {
   constructor() {
@@ -38,7 +38,7 @@ class App extends Component {
         "11pm",
         "12am"
       ],
-      eventsData: { },
+      eventsData: {},
       accessToken: "",
       currentDate: moment(),
       showPopup: false,
@@ -67,29 +67,29 @@ class App extends Component {
   }
 
   saveStateToLocalStorage() {
-    localStorage.setItem('venueData', JSON.stringify(this.state.venueData));
+    localStorage.setItem("venueData", JSON.stringify(this.state.venueData));
   }
 
   hydrateStateWithLocalStorage() {
-    if (localStorage.hasOwnProperty('venueData')) {
-      const venueData = JSON.parse(localStorage.getItem('venueData'));
-      this.setState({venueData: venueData});
+    if (localStorage.hasOwnProperty("venueData")) {
+      const venueData = JSON.parse(localStorage.getItem("venueData"));
+      this.setState({ venueData: venueData });
     }
   }
 
   showLoginButton() {
-    document.getElementById('googleLoginButton').hidden = false;
-    document.getElementById('googleLogoutButton').hidden = true;
+    // document.getElementById("googleLoginButton").hidden = false;
+    // document.getElementById("googleLogoutButton").hidden = true;
   }
 
   showLogoutButton() {
-    document.getElementById('googleLoginButton').hidden = true;
-    document.getElementById('googleLogoutButton').hidden = false;
+    // document.getElementById("googleLoginButton").hidden = true;
+    // document.getElementById("googleLogoutButton").hidden = false;
   }
 
   addVenue(venue) {
     let venueData = [...this.state.venueData];
-    venueData.push(venue)
+    venueData.push(venue);
     this.setState({
       venueData: venueData
     });
@@ -105,28 +105,39 @@ class App extends Component {
 
   fetchEvents(date) {
     this.setState({
-      eventsData : {}
+      eventsData: {}
     });
 
     const start = new Date(date.year(), date.month(), date.date(), 0, 0, 0, 0);
-    const end = new Date(date.year(), date.month(), date.date() + 1, 0, 0, 0, 0);
+    const end = new Date(
+      date.year(),
+      date.month(),
+      date.date() + 1,
+      0,
+      0,
+      0,
+      0
+    );
 
-    const token     = this.state.accessToken;
-    const calendar  = encodeURIComponent("primary");
-    const timeMin   = encodeURIComponent(start.toISOString());
-    const timeMax   = encodeURIComponent(end.toISOString());
-    const fields    = encodeURIComponent("items(end,location,start,summary)");
-    const key       = encodeURIComponent(getGoogleApiKey());
+    const token = this.state.accessToken;
+    const calendar = encodeURIComponent("primary");
+    const timeMin = encodeURIComponent(start.toISOString());
+    const timeMax = encodeURIComponent(end.toISOString());
+    const fields = encodeURIComponent("items(end,location,start,summary)");
+    const key = encodeURIComponent(getGoogleApiKey());
     let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`;
-    fetch(eventListRequest, {method:'get', headers: new Headers({'Authorization' : 'Bearer ' + token})})
+    fetch(eventListRequest, {
+      method: "get",
+      headers: new Headers({ Authorization: "Bearer " + token })
+    })
       .then(res => res.json())
       .then(
-        (result) => {
-          this.parseCalendarEventsResponse(result)
-          this.showLogoutButton()
+        result => {
+          this.parseCalendarEventsResponse(result);
+          this.showLogoutButton();
         },
-        (error) => {
-          console.log(error)
+        error => {
+          console.log(error);
         }
       );
   }
@@ -140,23 +151,26 @@ class App extends Component {
         if (event.start && event.end) {
           const startTime = new Date(event.start.dateTime);
           const endTime = new Date(event.end.dateTime);
-          let times = this.state.timeData.slice(startTime.getHours()-1, endTime.getHours()-1);
+          let times = this.state.timeData.slice(
+            startTime.getHours() - 1,
+            endTime.getHours() - 1
+          );
 
           if (!eventsData[venue]) {
             eventsData[venue] = [];
           }
 
-          eventsData[venue].push({name: eventName, times: times});
+          eventsData[venue].push({ name: eventName, times: times });
         }
-      }   
+      }
     });
 
     this.setState({
-      eventsData : eventsData
+      eventsData: eventsData
     });
   }
 
-  handleDateChange = (date) => {
+  handleDateChange = date => {
     this.setState({
       currentDate: date
     });
@@ -164,41 +178,40 @@ class App extends Component {
     if (this.state.accessToken !== "") {
       this.fetchEvents(date);
     }
-  }
+  };
 
-  handleGoogleLoginResponse = (response) => {
+  handleGoogleLoginResponse = response => {
     this.setState({
       accessToken: response.Zi.access_token
-    })
+    });
     this.fetchEvents(this.state.currentDate);
-  }
+  };
 
   handleLogout = () => {
     this.setState({
-      eventsData : {}
+      eventsData: {}
     });
 
     this.showLoginButton();
-  }
+  };
 
   addVenueClicked = () => {
     this.togglePopup();
-  }
+  };
 
   removeVenueClicked = () => {
     if (this.state.venueData.length > 0) {
       this.venueTable.current.toggleVenueDelete();
       if (this.state.removeBtnBgColor === "darkgray") {
-        this.setState({removeBtnBgColor:"red"})
-      }
-      else {
-        this.setState({removeBtnBgColor:"darkgray"})
+        this.setState({ removeBtnBgColor: "red" });
+      } else {
+        this.setState({ removeBtnBgColor: "darkgray" });
       }
     }
-  }
+  };
 
   addVenuePopupSubmitted(venue) {
-    console.log(venue)
+    console.log(venue);
     this.addVenue(venue);
     this.togglePopup();
   }
@@ -221,10 +234,11 @@ class App extends Component {
               <tbody>
                 <tr>
                   <td>
-                    <button 
-                      className="add" 
-                      onClick={this.addVenueClicked}>
-                      <span role="img" aria-label="plus">➕</span>Add Venue
+                    <button className="add" onClick={this.addVenueClicked}>
+                      <span role="img" aria-label="plus">
+                        ➕
+                      </span>
+                      Add Venue
                     </button>
                   </td>
                   <td>
@@ -239,11 +253,15 @@ class App extends Component {
                     />
                   </td>
                   <td>
-                    <button 
+                    <button
                       className="remove"
-                      style={{backgroundColor:this.state.removeBtnBgColor}}
-                      onClick={this.removeVenueClicked}>
-                      <span role="img" aria-label="trashcan">🗑️ </span> Remove Venue
+                      style={{ backgroundColor: this.state.removeBtnBgColor }}
+                      onClick={this.removeVenueClicked}
+                    >
+                      <span role="img" aria-label="trashcan">
+                        🗑️{" "}
+                      </span>{" "}
+                      Remove Venue
                     </button>
                   </td>
                 </tr>
@@ -251,7 +269,7 @@ class App extends Component {
             </table>
           </div>
           <div id="right">
-            <br/>
+            <br />
             <div id="googleLoginButton">
               <GoogleLogin
                 clientId={getGoogleClientId()}
@@ -270,22 +288,20 @@ class App extends Component {
             </div>
           </div>
         </div>
-        <br/>
-        <VenueTable 
+        <br />
+        <VenueTable
           ref={this.venueTable}
-          venueData={this.state.venueData} 
-          timeData={this.state.timeData} 
-          eventsData={this.state.eventsData} 
+          venueData={this.state.venueData}
+          timeData={this.state.timeData}
+          eventsData={this.state.eventsData}
           handleRemoveVenue={this.removeVenue.bind(this)}
         />
-        {
-          this.state.showPopup ? 
+        {this.state.showPopup ? (
           <AddVenuePopup
             addClicked={this.addVenuePopupSubmitted.bind(this)}
             closePopup={this.togglePopup.bind(this)}
           />
-          : null
-        }
+        ) : null}
       </div>
     );
   }
@@ -301,7 +317,7 @@ function getGoogleClientId() {
   return process.env.REACT_APP_GOOGLE_CLIENT_ID;
 }
 
-class AddVenuePopup extends Component {
+class AddVenuePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -310,37 +326,36 @@ class AddVenuePopup extends Component {
     };
   }
 
-  handleNameChange = (event) => {
-    this.setState({name: event.target.value});
-  }
+  handleNameChange = event => {
+    this.setState({ name: event.target.value });
+  };
 
-  handleSubmit = (event) => {
+  handleSubmit = event => {
     console.log(this.state.name);
     this.props.addClicked({
       name: this.state.name
     });
-  }
+  };
 
   render() {
     return (
-      <div className='popup'>
-        <div className='popup_inner'>
+      <div className="popup">
+        <div className="popup_inner">
           <h2>Add Venue</h2>
-          <input 
-            className="venue-name-input" 
-            type="text" 
-            value={this.state.name} 
-            onChange={this.handleNameChange} />
-          <br/><br/>
-          <button 
-            className="add" 
-            onClick={this.handleSubmit}>
+          <input
+            className="venue-name-input"
+            type="text"
+            value={this.state.name}
+            onChange={this.handleNameChange}
+          />
+          <br />
+          <br />
+          <button className="add" onClick={this.handleSubmit}>
             Add
           </button>
-          <br/><br/>
-          <button 
-            className="remove" 
-            onClick={this.props.closePopup}>
+          <br />
+          <br />
+          <button className="remove" onClick={this.props.closePopup}>
             Cancel
           </button>
         </div>
