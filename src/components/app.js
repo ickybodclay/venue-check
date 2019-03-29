@@ -49,14 +49,14 @@ export class App extends Component {
       accessToken: "",
       currentDate: new Date(),
       showPopup: false,
-      removeBtnBgColor: "red"
+      removeBtnBgColor: "red",
+      isLoggedIn: false
     };
     this.venueTable = React.createRef();
   }
 
   componentDidMount() {
     this.hydrateStateWithLocalStorage();
-    this.showLoginButton();
 
     window.addEventListener(
       "beforeunload",
@@ -85,13 +85,11 @@ export class App extends Component {
   }
 
   showLoginButton() {
-    document.getElementById("googleLoginButton").hidden = false;
-    document.getElementById("googleLogoutButton").hidden = true;
+    this.setState({ isLoggedIn: false });
   }
 
   showLogoutButton() {
-    document.getElementById("googleLoginButton").hidden = true;
-    document.getElementById("googleLogoutButton").hidden = false;
+    this.setState({ isLoggedIn: true });
   }
 
   addVenue(venue) {
@@ -114,12 +112,19 @@ export class App extends Component {
     this.setState({
       eventsData: {}
     });
-
-    const start = new Date(date.year(), date.month(), date.date(), 0, 0, 0, 0);
+    const start = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDay(),
+      0,
+      0,
+      0,
+      0
+    );
     const end = new Date(
-      date.year(),
-      date.month(),
-      date.date() + 1,
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDay() + 1,
       0,
       0,
       0,
@@ -188,10 +193,19 @@ export class App extends Component {
   };
 
   handleGoogleLoginResponse = response => {
-    this.setState({
-      accessToken: response.Zi.access_token
-    });
-    this.fetchEvents(this.state.currentDate);
+    if (response) {
+      if (!response.error) {
+        this.setState({
+          accessToken: response.Zi.access_token,
+          isLoggedIn: true
+        });
+        this.fetchEvents(this.state.currentDate);
+      }
+    } else {
+      this.setState({
+        isLoggedIn: false
+      });
+    }
   };
 
   handleLogout = () => {
@@ -230,6 +244,8 @@ export class App extends Component {
   }
 
   render() {
+    const { isLoggedIn } = this.state;
+
     return (
       <div className="App">
         <div id="container">
@@ -277,22 +293,26 @@ export class App extends Component {
           </div>
           <div id="right">
             <br />
-            <div id="googleLoginButton">
-              <GoogleLogin
-                clientId={getGoogleClientId()}
-                buttonText="Login"
-                scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
-                onSuccess={this.handleGoogleLoginResponse}
-                onFailure={this.handleGoogleLoginResponse}
-                isSignedIn={process.env.REACT_APP_KMSI === "true"}
-              />
-            </div>
-            <div id="googleLogoutButton">
-              <GoogleLogout
-                buttonText="Logout"
-                onLogoutSuccess={this.handleLogout}
-              />
-            </div>
+            {!isLoggedIn && (
+              <div id="googleLoginButton">
+                <GoogleLogin
+                  clientId={getGoogleClientId()}
+                  buttonText="Login"
+                  scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
+                  onSuccess={this.handleGoogleLoginResponse}
+                  onFailure={this.handleGoogleLoginResponse}
+                  isSignedIn={process.env.REACT_APP_KMSI === "true"}
+                />
+              </div>
+            )}
+            {isLoggedIn && (
+              <div id="googleLogoutButton">
+                <GoogleLogout
+                  buttonText="Logout"
+                  onLogoutSuccess={this.handleLogout}
+                />
+              </div>
+            )}
           </div>
         </div>
         <br />
