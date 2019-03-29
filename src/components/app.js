@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
-import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 //components
