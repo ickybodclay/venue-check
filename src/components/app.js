@@ -41,7 +41,7 @@ const TIME_DATA = [
 ];
 
 export function App() {
-  const storageVenueData = localStorage.getItem("venueData");
+  const storageVenueData = JSON.parse(localStorage.getItem("venueData"));
   const initVenueData = storageVenueData ? storageVenueData : [];
   const [venueData, setVenueData] = useState(initVenueData);
   const [eventsData, setEventsData] = useState({});
@@ -52,7 +52,7 @@ export function App() {
   const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("venueData", venueData);
+    localStorage.setItem("venueData", JSON.stringify(venueData));
   }, [venueData]);
 
   function handleDateChange(date) {
