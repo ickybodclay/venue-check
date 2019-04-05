@@ -10,8 +10,44 @@ import "react-datepicker/dist/react-datepicker.css";
 import { VenueTable } from "./venueTable";
 import { AddVenuePopup } from "./addVenuePopup";
 
-//Utility
+//utility
 import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
+
+// export function App() {
+//   const [venueData, setVenueData] = useState([]);
+//   const [timeData, setTimeData] = useState([
+//     "1am",
+//     "2am",
+//     "3am",
+//     "4am",
+//     "5am",
+//     "6am",
+//     "7am",
+//     "8am",
+//     "9am",
+//     "10am",
+//     "11am",
+//     "12pm",
+//     "1pm",
+//     "2pm",
+//     "3pm",
+//     "4pm",
+//     "5pm",
+//     "6pm",
+//     "7pm",
+//     "8pm",
+//     "9pm",
+//     "10pm",
+//     "11pm",
+//     "12am"
+//   ]);
+//   const [eventsData, setEventsData] = useState({});
+//   const [accessToken, setAccessToken] = useState("");
+//   const [currentDate, setCurrentDate] = useState(new Date());
+//   const [showPopup, setShowPopup] = useState(false);
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+//   const [showDelete, setShowDelete] = useState(false);
+// }
 
 export class App extends Component {
   constructor() {
@@ -48,10 +84,9 @@ export class App extends Component {
       accessToken: "",
       currentDate: new Date(),
       showPopup: false,
-      removeBtnBgColor: "red",
-      isLoggedIn: false
+      isLoggedIn: false,
+      showDelete: false
     };
-    this.venueTable = React.createRef();
   }
 
   componentDidMount() {
@@ -221,12 +256,7 @@ export class App extends Component {
 
   removeVenueClicked = () => {
     if (this.state.venueData.length > 0) {
-      this.venueTable.current.toggleVenueDelete();
-      if (this.state.removeBtnBgColor === "darkgray") {
-        this.setState({ removeBtnBgColor: "red" });
-      } else {
-        this.setState({ removeBtnBgColor: "darkgray" });
-      }
+      this.setState({ showDelete: !this.state.showDelete });
     }
   };
 
@@ -276,7 +306,6 @@ export class App extends Component {
                   <td>
                     <button
                       className="remove"
-                      style={{ backgroundColor: this.state.removeBtnBgColor }}
                       onClick={this.removeVenueClicked}
                     >
                       <span role="img" aria-label="trashcan">
@@ -315,11 +344,11 @@ export class App extends Component {
         </div>
         <br />
         <VenueTable
-          ref={this.venueTable}
           venueData={this.state.venueData}
           timeData={this.state.timeData}
           eventsData={this.state.eventsData}
           handleRemoveVenue={this.removeVenue.bind(this)}
+          showDelete={this.state.showDelete}
         />
         {this.state.showPopup ? (
           <AddVenuePopup
