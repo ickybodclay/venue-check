@@ -14,7 +14,6 @@ export class AddVenuePopup extends Component {
   };
 
   handleSubmit = event => {
-    console.log(this.state.name);
     this.props.addClicked({
       name: this.state.name
     });

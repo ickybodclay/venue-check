@@ -231,7 +231,6 @@ export class App extends Component {
   };
 
   addVenuePopupSubmitted(venue) {
-    console.log(venue);
     this.addVenue(venue);
     this.togglePopup();
   }
@@ -247,7 +246,7 @@ export class App extends Component {
 
     return (
       <div className="App">
-        <div id="container">
+        <div className="container">
           <div id="left">
             <h1>Venue Check</h1>
           </div>
