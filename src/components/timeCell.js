@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 
-export class TimeCell extends Component {
-  render() {
-    const time = this.props.time;
+export function TimeCell(props) {
+  const { time } = props;
+  if (time) {
     return <td className="time-cell">{time}</td>;
   }
 }

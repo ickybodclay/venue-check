@@ -1,7 +1,5 @@
-import React, { Component } from "react";
-
-export class TimeRow extends Component {
-  render() {
-    return <tr>{this.props.children}</tr>;
-  }
+import React from "react";
+export function TimeRow(props) {
+  const { children } = props;
+  return <tr>{children}</tr>;
 }
