@@ -1,20 +1,18 @@
-import React, { Component } from "react";
+import React from "react";
 
-export class VenueCell extends Component {
-  render() {
-    const venueIndex = this.props.venueIndex;
-    return (
-      <th>
-        {this.props.venueName}&nbsp;
-        {this.props.showDelete && (
-          <button
-            className="removeVenue"
-            onClick={() => this.props.onDeleteClicked(venueIndex)}
-          >
-            X
-          </button>
-        )}
-      </th>
-    );
-  }
+export function VenueCell(props) {
+  const { venueIndex, onDeleteClicked, venueName, showDelete } = props;
+  return (
+    <th>
+      {venueName}&nbsp;
+      {showDelete && (
+        <button
+          className="removeVenue"
+          onClick={() => onDeleteClicked(venueIndex)}
+        >
+          X
+        </button>
+      )}
+    </th>
+  );
 }
