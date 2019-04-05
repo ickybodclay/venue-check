@@ -1,47 +1,43 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 
-export class AddVenuePopup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      address: ""
-    };
-  }
+export function AddVenuePopup(props) {
+  const { closePopup } = props;
+  const [name, setName] = useState("");
+  //const [address, setAddress] = useState("");
 
-  handleNameChange = event => {
-    this.setState({ name: event.target.value });
+  const handleNameChange = event => {
+    setName(event.target.value);
   };
 
-  handleSubmit = event => {
-    this.props.addClicked({
-      name: this.state.name
+  const handleSubmit = _event => {
+    const { addClicked } = props;
+
+    addClicked({
+      name: name
     });
   };
 
-  render() {
-    return (
-      <div className="popup">
-        <div className="popup_inner">
-          <h2>Add Venue</h2>
-          <input
-            className="venue-name-input"
-            type="text"
-            value={this.state.name}
-            onChange={this.handleNameChange}
-          />
-          <br />
-          <br />
-          <button className="add" onClick={this.handleSubmit}>
-            Add
-          </button>
-          <br />
-          <br />
-          <button className="remove" onClick={this.props.closePopup}>
-            Cancel
-          </button>
-        </div>
+  return (
+    <div className="popup">
+      <div className="popup_inner">
+        <h2>Add Venue</h2>
+        <input
+          className="venue-name-input"
+          type="text"
+          value={name}
+          onChange={handleNameChange}
+        />
+        <br />
+        <br />
+        <button className="add" onClick={handleSubmit}>
+          Add
+        </button>
+        <br />
+        <br />
+        <button className="remove" onClick={closePopup}>
+          Cancel
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
 }
