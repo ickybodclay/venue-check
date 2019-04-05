@@ -1,5 +1,6 @@
 import React from "react";
 
+//SFC (Stateless Functional Component)
 export function EventCell(props) {
   const { event } = props;
   if (event) {
