@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 
 export function AddVenuePopup(props) {
-  const { closePopup } = props;
+  const { closePopup, addClicked } = props;
   const [name, setName] = useState("");
-  //const [address, setAddress] = useState("");
 
   const handleNameChange = event => {
     setName(event.target.value);
   };
 
   const handleSubmit = _event => {
-    const { addClicked } = props;
-
     addClicked({
       name: name
     });

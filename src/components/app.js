@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 //libraries
 import { GoogleLogin } from "react-google-login";
@@ -13,139 +13,113 @@ import { AddVenuePopup } from "./addVenuePopup";
 //utility
 import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
 
-// export function App() {
-//   const [venueData, setVenueData] = useState([]);
-//   const [timeData, setTimeData] = useState([
-//     "1am",
-//     "2am",
-//     "3am",
-//     "4am",
-//     "5am",
-//     "6am",
-//     "7am",
-//     "8am",
-//     "9am",
-//     "10am",
-//     "11am",
-//     "12pm",
-//     "1pm",
-//     "2pm",
-//     "3pm",
-//     "4pm",
-//     "5pm",
-//     "6pm",
-//     "7pm",
-//     "8pm",
-//     "9pm",
-//     "10pm",
-//     "11pm",
-//     "12am"
-//   ]);
-//   const [eventsData, setEventsData] = useState({});
-//   const [accessToken, setAccessToken] = useState("");
-//   const [currentDate, setCurrentDate] = useState(new Date());
-//   const [showPopup, setShowPopup] = useState(false);
-//   const [isLoggedIn, setIsLoggedIn] = useState(false);
-//   const [showDelete, setShowDelete] = useState(false);
-// }
+const TIME_DATA = [
+  "1am",
+  "2am",
+  "3am",
+  "4am",
+  "5am",
+  "6am",
+  "7am",
+  "8am",
+  "9am",
+  "10am",
+  "11am",
+  "12pm",
+  "1pm",
+  "2pm",
+  "3pm",
+  "4pm",
+  "5pm",
+  "6pm",
+  "7pm",
+  "8pm",
+  "9pm",
+  "10pm",
+  "11pm",
+  "12am"
+];
 
-export class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      venueData: [],
-      timeData: [
-        "1am",
-        "2am",
-        "3am",
-        "4am",
-        "5am",
-        "6am",
-        "7am",
-        "8am",
-        "9am",
-        "10am",
-        "11am",
-        "12pm",
-        "1pm",
-        "2pm",
-        "3pm",
-        "4pm",
-        "5pm",
-        "6pm",
-        "7pm",
-        "8pm",
-        "9pm",
-        "10pm",
-        "11pm",
-        "12am"
-      ],
-      eventsData: {},
-      accessToken: "",
-      currentDate: new Date(),
-      showPopup: false,
-      isLoggedIn: false,
-      showDelete: false
-    };
-  }
+export function App() {
+  const storageVenueData = localStorage.getItem("venueData");
+  const initVenueData = storageVenueData ? storageVenueData : [];
+  const [venueData, setVenueData] = useState(initVenueData);
+  const [eventsData, setEventsData] = useState({});
+  const [accessToken, setAccessToken] = useState("");
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [showPopup, setShowPopup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
-  componentDidMount() {
-    this.hydrateStateWithLocalStorage();
+  useEffect(() => {
+    localStorage.setItem("venueData", venueData);
+  }, [venueData]);
 
-    window.addEventListener(
-      "beforeunload",
-      this.saveStateToLocalStorage.bind(this)
-    );
-  }
+  function handleDateChange(date) {
+    setCurrentDate(date);
 
-  componentWillUnmount() {
-    window.removeEventListener(
-      "beforeunload",
-      this.saveStateToLocalStorage.bind(this)
-    );
-
-    this.saveStateToLocalStorage();
-  }
-
-  saveStateToLocalStorage() {
-    localStorage.setItem("venueData", JSON.stringify(this.state.venueData));
-  }
-
-  hydrateStateWithLocalStorage() {
-    if (localStorage.hasOwnProperty("venueData")) {
-      const venueData = JSON.parse(localStorage.getItem("venueData"));
-      this.setState({ venueData: venueData });
+    if (accessToken !== "") {
+      fetchEvents(date, accessToken);
     }
   }
 
-  showLoginButton() {
-    this.setState({ isLoggedIn: false });
+  function removeVenueClicked() {
+    if (venueData.length > 0) {
+      setShowDelete(!showDelete);
+    }
   }
 
-  showLogoutButton() {
-    this.setState({ isLoggedIn: true });
+  function handleGoogleLoginResponse(response) {
+    if (response) {
+      if (!response.error) {
+        setAccessToken(response.Zi.access_token);
+        setIsLoggedIn(true);
+        fetchEvents(currentDate, response.Zi.access_token);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
   }
 
-  addVenue(venue) {
-    let venueData = [...this.state.venueData];
-    venueData.push(venue);
-    this.setState({
-      venueData: venueData
-    });
+  function handleLogout() {
+    setEventsData({});
+    showLoginButton();
   }
 
-  removeVenue(index) {
-    let venueData = [...this.state.venueData];
+  function showLoginButton() {
+    setIsLoggedIn(false);
+  }
+
+  function showLogoutButton() {
+    setIsLoggedIn(true);
+  }
+
+  function addVenue(venue) {
+    let newVenueData = [...venueData];
+    newVenueData.push(venue);
+    setVenueData(newVenueData);
+  }
+
+  function removeVenue(index) {
+    let venueData = [...venueData];
     venueData.splice(index, 1);
-    this.setState({
-      venueData: venueData
-    });
+    setVenueData(venueData);
   }
 
-  fetchEvents(date) {
-    this.setState({
-      eventsData: {}
-    });
+  function addVenuePopupSubmitted(venue) {
+    //{name: name}
+    addVenue(venue);
+    togglePopup();
+  }
+
+  function togglePopup() {
+    setShowPopup(!showPopup);
+  }
+
+  function fetchEvents(date, token) {
+    setEventsData({});
     const start = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -165,7 +139,6 @@ export class App extends Component {
       0
     );
 
-    const token = this.state.accessToken;
     const calendar = encodeURIComponent("primary");
     const timeMin = encodeURIComponent(start.toISOString());
     const timeMax = encodeURIComponent(end.toISOString());
@@ -179,8 +152,8 @@ export class App extends Component {
       .then(res => res.json())
       .then(
         result => {
-          this.parseCalendarEventsResponse(result);
-          this.showLogoutButton();
+          parseCalendarEventsResponse(result);
+          showLogoutButton();
         },
         error => {
           console.log(error);
@@ -188,7 +161,7 @@ export class App extends Component {
       );
   }
 
-  parseCalendarEventsResponse(response) {
+  function parseCalendarEventsResponse(response) {
     let eventsData = {};
     response.items.forEach(event => {
       if (event.location) {
@@ -197,7 +170,7 @@ export class App extends Component {
         if (event.start && event.end) {
           const startTime = new Date(event.start.dateTime);
           const endTime = new Date(event.end.dateTime);
-          let times = this.state.timeData.slice(
+          let times = TIME_DATA.slice(
             startTime.getHours() - 1,
             endTime.getHours() - 1
           );
@@ -211,152 +184,88 @@ export class App extends Component {
       }
     });
 
-    this.setState({
-      eventsData: eventsData
-    });
+    setEventsData(eventsData);
   }
 
-  handleDateChange = date => {
-    this.setState({
-      currentDate: date
-    });
-
-    if (this.state.accessToken !== "") {
-      this.fetchEvents(date);
-    }
-  };
-
-  handleGoogleLoginResponse = response => {
-    if (response) {
-      if (!response.error) {
-        this.setState({
-          accessToken: response.Zi.access_token,
-          isLoggedIn: true
-        });
-        this.fetchEvents(this.state.currentDate);
-      }
-    } else {
-      this.setState({
-        isLoggedIn: false
-      });
-    }
-  };
-
-  handleLogout = () => {
-    this.setState({
-      eventsData: {}
-    });
-
-    this.showLoginButton();
-  };
-
-  addVenueClicked = () => {
-    this.togglePopup();
-  };
-
-  removeVenueClicked = () => {
-    if (this.state.venueData.length > 0) {
-      this.setState({ showDelete: !this.state.showDelete });
-    }
-  };
-
-  addVenuePopupSubmitted(venue) {
-    this.addVenue(venue);
-    this.togglePopup();
-  }
-
-  togglePopup() {
-    this.setState({
-      showPopup: !this.state.showPopup
-    });
-  }
-
-  render() {
-    const { isLoggedIn } = this.state;
-
-    return (
-      <div className="App">
-        <div className="container">
-          <div id="left">
-            <h1>Venue Check</h1>
-          </div>
-          <div id="middle">
-            <table width="100%">
-              <tbody>
-                <tr>
-                  <td>
-                    <button className="add" onClick={this.addVenueClicked}>
-                      <span role="img" aria-label="plus">
-                        ➕
-                      </span>
-                      Add Venue
-                    </button>
-                  </td>
-                  <td>
-                    <DatePicker
-                      selected={this.state.currentDate}
-                      onChange={this.handleDateChange}
-                      className="date-picker"
-                      peekNextMonth
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className="remove"
-                      onClick={this.removeVenueClicked}
-                    >
-                      <span role="img" aria-label="trashcan">
-                        🗑️{" "}
-                      </span>{" "}
-                      Remove Venue
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="right">
-            <br />
-            {!isLoggedIn && (
-              <div id="googleLoginButton">
-                <GoogleLogin
-                  clientId={getGoogleClientId()}
-                  buttonText="Login"
-                  scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
-                  onSuccess={this.handleGoogleLoginResponse}
-                  onFailure={this.handleGoogleLoginResponse}
-                  isSignedIn={process.env.REACT_APP_KMSI === "true"}
-                />
-              </div>
-            )}
-            {isLoggedIn && (
-              <div id="googleLogoutButton">
-                <GoogleLogout
-                  buttonText="Logout"
-                  onLogoutSuccess={this.handleLogout}
-                />
-              </div>
-            )}
-          </div>
+  return (
+    <div className="App">
+      <div className="container">
+        <div id="left">
+          <h1>Venue Check</h1>
         </div>
-        <br />
-        <VenueTable
-          venueData={this.state.venueData}
-          timeData={this.state.timeData}
-          eventsData={this.state.eventsData}
-          handleRemoveVenue={this.removeVenue.bind(this)}
-          showDelete={this.state.showDelete}
-        />
-        {this.state.showPopup ? (
-          <AddVenuePopup
-            addClicked={this.addVenuePopupSubmitted.bind(this)}
-            closePopup={this.togglePopup.bind(this)}
-          />
-        ) : null}
+        <div id="middle">
+          <table width="100%">
+            <tbody>
+              <tr>
+                <td>
+                  <button className="add" onClick={togglePopup}>
+                    <span role="img" aria-label="plus">
+                      ➕
+                    </span>
+                    Add Venue
+                  </button>
+                </td>
+                <td>
+                  <DatePicker
+                    selected={currentDate}
+                    onChange={handleDateChange}
+                    className="date-picker"
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                  />
+                </td>
+                <td>
+                  <button className="remove" onClick={removeVenueClicked}>
+                    <span role="img" aria-label="trashcan">
+                      🗑️{" "}
+                    </span>{" "}
+                    Remove Venue
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="right">
+          <br />
+          {!isLoggedIn && (
+            <div id="googleLoginButton">
+              <GoogleLogin
+                clientId={getGoogleClientId()}
+                buttonText="Login"
+                scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
+                onSuccess={handleGoogleLoginResponse}
+                onFailure={handleGoogleLoginResponse}
+                isSignedIn={process.env.REACT_APP_KMSI === "true"}
+              />
+            </div>
+          )}
+          {isLoggedIn && (
+            <div id="googleLogoutButton">
+              <GoogleLogout
+                buttonText="Logout"
+                onLogoutSuccess={handleLogout}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    );
-  }
+      <br />
+      <VenueTable
+        venueData={venueData}
+        timeData={TIME_DATA}
+        eventsData={eventsData}
+        handleRemoveVenue={removeVenue}
+        showDelete={showDelete}
+      />
+      {showPopup ? (
+        <AddVenuePopup
+          addClicked={addVenuePopupSubmitted}
+          closePopup={togglePopup}
+        />
+      ) : null}
+    </div>
+  );
 }
