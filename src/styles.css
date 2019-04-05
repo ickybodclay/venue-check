@@ -2,27 +2,6 @@
   text-align: center;
 }
 
-/* .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-} */
-
-/* @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-} */
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
 body {
   background-color: #222;
 }
@@ -34,15 +13,28 @@ h1 {
   vertical-align: center;
 }
 
-.App-intro {
-  font-size: large;
+.container {
+  font-size: 0;
 }
 
-#container {height: 100%; width:100%; font-size: 0;}
-#left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: bottom; font-size: 12px;}
-#left {width: 25%;}
-#middle {width: 50%;}
-#right {width: 25%;}
+#left,
+#middle,
+#right {
+  display: inline-block;
+  zoom: 1;
+  vertical-align: bottom;
+  font-size: 12px;
+}
+
+#left {
+  width: 25%;
+}
+#middle {
+  width: 50%;
+}
+#right {
+  width: 25%;
+}
 
 .busy-cell {
   background-color: yellow;
@@ -54,7 +46,7 @@ table {
 }
 
 .venue-table {
-  width: 95%;  
+  width: 95%;
 }
 
 th {
@@ -117,7 +109,7 @@ input.venue-name-input {
   right: 0;
   bottom: 0;
   margin: auto;
-  background-color: rgba(0,0,0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .popup_inner {

@@ -1,23 +1,35 @@
 {
   "name": "venue-check",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "https://venue-check.herokuapp.com/",
-  "dependencies": {
-    "moment": "^2.22.2",
-    "react": "^16.6.0",
-    "react-datepicker": "^1.8.0",
-    "react-dom": "^16.6.0",
-    "react-google-login": "^3.2.1",
-    "react-scripts": "1.1.5",
-    "serve": "^10.0.2"
-  },
+  "version": "1.0.0",
+  "description": "Easily check what venues from your Google Calendar are available at a glance.",
+  "main": "index.js",
   "scripts": {
-    "dev": "react-scripts start",
-    "start": "serve -s build",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "heroku-postbuild": "npm run build"
+    "clean": "rm dist/bundle.js",
+    "start": "parcel -p 3000 src/index.html",
+    "build-prod": "parcel build src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ickybodclay/venue-check.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ickybodclay/venue-check/issues"
+  },
+  "homepage": "https://github.com/ickybodclay/venue-check#readme",
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-datepicker": "^2.3.0",
+    "react-dom": "^16.8.6",
+    "react-google-login": "^5.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "parcel-bundler": "^1.12.3"
   }
 }
