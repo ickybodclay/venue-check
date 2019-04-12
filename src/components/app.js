@@ -5,6 +5,7 @@ import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { slide as Menu } from "react-burger-menu";
 
 //components
 import { VenueTable } from "./venueTable";
@@ -172,7 +173,7 @@ export function App() {
           // Note: for all day events, dateTime on start and end will be undefined
           const startTime = new Date(event.start.dateTime);
           const endTime = new Date(event.end.dateTime);
-          
+
           let times = TIME_DATA.slice(
             startTime.getHours() - 1,
             endTime.getHours() - 1
@@ -182,8 +183,8 @@ export function App() {
             eventsData[venue] = [];
           }
 
-          eventsData[venue].push({ 
-            name: eventName, 
+          eventsData[venue].push({
+            name: eventName,
             times: times,
             venue: venue,
             location: location,
@@ -199,46 +200,27 @@ export function App() {
 
   return (
     <div className="App">
-      <div className="container">
-        <div id="left">
+      <div id="outer-container">
+        <Menu
+          pageWrapId={"page-wrap"}
+          outerContainerId={"outer-container"}
+          disableAutoFocus
+          noOverlay
+        >
           <h1>Venue Check</h1>
-        </div>
-        <div id="middle">
-          <table width="100%">
-            <tbody>
-              <tr>
-                <td>
-                  <button className="add" onClick={togglePopup}>
-                    <span role="img" aria-label="plus">
-                      ➕
-                    </span>
-                    Add Venue
-                  </button>
-                </td>
-                <td>
-                  <DatePicker
-                    selected={currentDate}
-                    onChange={handleDateChange}
-                    className="date-picker"
-                    peekNextMonth
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                  />
-                </td>
-                <td>
-                  <button className="remove" onClick={removeVenueClicked}>
-                    <span role="img" aria-label="trashcan">
-                      🗑️{" "}
-                    </span>{" "}
-                    Remove Venue
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div id="right">
+          <button className="add" onClick={togglePopup}>
+            <span role="img" aria-label="plus">
+              ➕
+            </span>
+            Add Venue
+          </button>
+          <br />
+          <button className="remove" onClick={removeVenueClicked}>
+            <span role="img" aria-label="trashcan">
+              🗑️{" "}
+            </span>{" "}
+            Remove Venue
+          </button>
           <br />
           {!isLoggedIn && (
             <div id="googleLoginButton">
@@ -260,22 +242,35 @@ export function App() {
               />
             </div>
           )}
-        </div>
+        </Menu>
+        <main id="page-wrap">
+          <div className="container">
+            <DatePicker
+              selected={currentDate}
+              onChange={handleDateChange}
+              className="date-picker"
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+            />
+          </div>
+          <br />
+          <VenueTable
+            venueData={venueData}
+            timeData={TIME_DATA}
+            eventsData={eventsData}
+            handleRemoveVenue={removeVenue}
+            showDelete={showDelete}
+          />
+          {showPopup ? (
+            <AddVenuePopup
+              addClicked={addVenuePopupSubmitted}
+              closePopup={togglePopup}
+            />
+          ) : null}
+        </main>
       </div>
-      <br />
-      <VenueTable
-        venueData={venueData}
-        timeData={TIME_DATA}
-        eventsData={eventsData}
-        handleRemoveVenue={removeVenue}
-        showDelete={showDelete}
-      />
-      {showPopup ? (
-        <AddVenuePopup
-          addClicked={addVenuePopupSubmitted}
-          closePopup={togglePopup}
-        />
-      ) : null}
     </div>
   );
 }

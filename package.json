@@ -4,9 +4,11 @@
   "description": "Easily check what venues from your Google Calendar are available at a glance.",
   "main": "index.js",
   "scripts": {
-    "clean": "rm dist/bundle.js",
+    "clean": "rm -rf dist/",
     "start": "parcel -p 3000 src/index.html",
-    "build-prod": "parcel build src/index.html"
+    "build-prod": "parcel build src/index.html",
+    "prod": "npm run clean && npm run build-prod && serve dist/",
+    "heroku-postbuild": "npm run build-prod"
   },
   "repository": {
     "type": "git",
@@ -21,15 +23,16 @@
   "homepage": "https://github.com/ickybodclay/venue-check#readme",
   "dependencies": {
     "react": "^16.8.6",
+    "react-burger-menu": "^2.6.8",
     "react-datepicker": "^2.3.0",
     "react-dom": "^16.8.6",
-    "react-google-login": "^5.0.2"
+    "react-google-login": "^5.0.2",
+    "serve": "^11.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
-    "@babel/preset-react": "^7.0.0",
-    "parcel-bundler": "^1.12.3"
+    "@babel/preset-react": "^7.0.0"
   }
 }

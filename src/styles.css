@@ -4,6 +4,7 @@
 
 body {
   background-color: #222;
+  margin: 0px;
 }
 
 h1 {
@@ -13,40 +14,9 @@ h1 {
   vertical-align: center;
 }
 
-.container {
-  font-size: 0;
-}
-
-#left,
-#middle,
-#right {
-  display: inline-block;
-  zoom: 1;
-  vertical-align: bottom;
-  font-size: 12px;
-}
-
-#left {
-  width: 25%;
-}
-#middle {
-  width: 50%;
-}
-#right {
-  width: 25%;
-}
-
-.busy-cell {
-  background-color: yellow;
-  border: 1px solid white;
-}
-
-table {
-  border-collapse: collapse;
-}
-
 .venue-table {
   width: 95%;
+  border-collapse: collapse;
 }
 
 th {
@@ -56,8 +26,6 @@ th {
 
 td.event {
   border: 1px solid white;
-  display: table-cell;
-  width: 150px;
 }
 
 td.time-cell {
@@ -66,6 +34,11 @@ td.time-cell {
   color: white;
   padding: 10px;
   text-align: left;
+}
+
+.busy-cell {
+  background-color: yellow;
+  border: 1px solid white;
 }
 
 .date-picker {
@@ -81,6 +54,7 @@ button.add {
   display: inline-block;
   width: 150px;
   border: none;
+  margin: 0 auto;
 }
 
 button.remove {
@@ -91,6 +65,7 @@ button.remove {
   display: inline-block;
   width: 150px;
   border: none;
+  margin: 0 auto;
 }
 
 input.venue-name-input {
@@ -120,4 +95,72 @@ input.venue-name-input {
   padding-bottom: 50px;
   margin: auto;
   background: white;
+}
+
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #373a47;
+}
+
+/* Color/shape of burger icon bars on hover*/
+.bm-burger-bars-hover {
+  background: #a90000;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+
+/*
+Sidebar wrapper styles
+Note: Beware of modifying this element as it can break the animations - you should not need to touch it in most cases
+*/
+.bm-menu-wrap {
+  position: fixed;
+  height: 100%;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+  overflow-y: hidden !important;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #b8b7ad;
+  padding: 0.8em;
+}
+
+/* Individual item */
+.bm-item {
+  display: inline-block;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
 }
