@@ -119,7 +119,7 @@ export function App() {
     setShowPopup(!showPopup);
   }
 
-  function fetchEvents(date, token) {
+  async function fetchEvents(date, token) {
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -145,21 +145,19 @@ export function App() {
     const timeMax = encodeURIComponent(end.toISOString());
     const fields = encodeURIComponent("items(end,location,start,summary)");
     const key = encodeURIComponent(getGoogleApiKey());
-    let eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`;
-    fetch(eventListRequest, {
-      method: "get",
-      headers: new Headers({ Authorization: "Bearer " + token })
-    })
-      .then(res => res.json())
-      .then(
-        result => {
-          parseCalendarEventsResponse(result);
-          showLogoutButton();
-        },
-        error => {
-          console.log(error);
-        }
-      );
+    const eventListRequest = `https://www.googleapis.com/calendar/v3/calendars/${calendar}/events?timeMax=${timeMax}&timeMin=${timeMin}&fields=${fields}&key=${key}`;
+
+    try {
+      const response = await fetch(eventListRequest, {
+        method: "GET",
+        headers: new Headers({ Authorization: "Bearer " + token })
+      });
+      const result = await response.json();
+      parseCalendarEventsResponse(result);
+      showLogoutButton();
+    } catch (error) {
+      console.log("error: ", +error);
+    }
   }
 
   function parseCalendarEventsResponse(response) {
