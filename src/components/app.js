@@ -123,7 +123,7 @@ export function App() {
     const start = new Date(
       date.getFullYear(),
       date.getMonth(),
-      date.getDay(),
+      date.getDate(),
       0,
       0,
       0,
@@ -132,7 +132,7 @@ export function App() {
     const end = new Date(
       date.getFullYear(),
       date.getMonth(),
-      date.getDay() + 1,
+      date.getDate() + 1,
       0,
       0,
       0,
@@ -165,11 +165,14 @@ export function App() {
     let eventsData = {};
     response.items.forEach(event => {
       if (event.location) {
+        const location = event.location;
         const venue = event.location.split(",")[0];
         const eventName = event.summary;
         if (event.start && event.end) {
+          // Note: for all day events, dateTime on start and end will be undefined
           const startTime = new Date(event.start.dateTime);
           const endTime = new Date(event.end.dateTime);
+          
           let times = TIME_DATA.slice(
             startTime.getHours() - 1,
             endTime.getHours() - 1
@@ -179,7 +182,14 @@ export function App() {
             eventsData[venue] = [];
           }
 
-          eventsData[venue].push({ name: eventName, times: times });
+          eventsData[venue].push({ 
+            name: eventName, 
+            times: times,
+            venue: venue,
+            location: location,
+            startTime: event.start.dateTime,
+            endTime: event.end.dateTime
+          });
         }
       }
     });

@@ -10,6 +10,9 @@
 /build
 /dist
 
+# notes
+*.scratch.txt
+
 # misc
 .DS_Store
 .env.local
