@@ -14,7 +14,14 @@ h1 {
   vertical-align: center;
 }
 
+h2 {
+  color: deeppink;
+  vertical-align: center;
+}
+
 .venue-table {
+  margin-top: 50px;
+  height: 100%;
   width: 95%;
   border-collapse: collapse;
 }

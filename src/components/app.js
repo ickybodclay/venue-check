@@ -5,7 +5,7 @@ import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { slide as Menu } from "react-burger-menu";
+import { scaleRotate as Menu } from "react-burger-menu";
 
 //components
 import { VenueTable } from "./venueTable";
@@ -104,9 +104,10 @@ export function App() {
   }
 
   function removeVenue(index) {
-    let venueData = [...venueData];
-    venueData.splice(index, 1);
-    setVenueData(venueData);
+    let newVenueData = [...venueData];
+    newVenueData.splice(index, 1);
+    setVenueData(newVenueData);
+    setShowDelete(!showDelete);
   }
 
   function addVenuePopupSubmitted(venue) {
@@ -120,6 +121,8 @@ export function App() {
   }
 
   async function fetchEvents(date, token) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById("date-label").innerHTML = date.toLocaleDateString('en-US', options);
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -206,6 +209,17 @@ export function App() {
           noOverlay
         >
           <h1>Venue Check</h1>
+          <DatePicker
+            selected={currentDate}
+            onChange={handleDateChange}
+            className="date-picker"
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+          />
+          <br />
+          <br />
           <button className="add" onClick={togglePopup}>
             <span role="img" aria-label="plus">
               ➕
@@ -242,18 +256,7 @@ export function App() {
           )}
         </Menu>
         <main id="page-wrap">
-          <div className="container">
-            <DatePicker
-              selected={currentDate}
-              onChange={handleDateChange}
-              className="date-picker"
-              peekNextMonth
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-            />
-          </div>
-          <br />
+          <h2 id="date-label"></h2>
           <VenueTable
             venueData={venueData}
             timeData={TIME_DATA}
