@@ -7,7 +7,7 @@ import { VenueCell } from "./venueCell";
 import { TimeRow } from "./timeRow";
 
 export function VenueTable(props) {
-  const { showDelete, venueData, timeData, eventsData } = props;
+  const { showDelete, venueData, timeData, currentDate, eventsData } = props;
 
   const handleDeleteClicked = index => {
     const { handleRemoveVenue } = props;
@@ -27,6 +27,10 @@ export function VenueTable(props) {
   });
 
   const rows = timeData.map(time => {
+    let now = new Date();
+    const highlight = (
+      sameDay(currentDate, now) &&
+      time === getHourTimeLabel(now))
     let children = [];
     children.push(<TimeCell key={time} time={time} />);
     const events = venueData.map(venue => {
@@ -46,8 +50,18 @@ export function VenueTable(props) {
       }
     });
     children.push(events);
-    return <TimeRow key={time} children={children} />;
+    return <TimeRow key={time} children={children} highlight={highlight}/>;
   });
+
+  function sameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  }
+
+  function getHourTimeLabel(time) {
+    return timeData[time.getHours() == 0 ? 23 : time.getHours() - 1];
+  }
 
   return (
     <table className="venue-table" align="center">
@@ -57,7 +71,9 @@ export function VenueTable(props) {
           {columns}
         </tr>
       </thead>
-      <tbody>{rows}</tbody>
+      <tbody>
+        {rows}
+      </tbody>
     </table>
   );
 }

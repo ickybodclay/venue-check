@@ -31,6 +31,10 @@ th {
   padding: 10px;
 }
 
+tr:nth-child(even) {
+  background-color: #3f3f3f;
+}
+
 td.event {
   border: 1px solid white;
 }
@@ -102,6 +106,14 @@ input.venue-name-input {
   padding-bottom: 50px;
   margin: auto;
   background: white;
+}
+
+.line{
+  width: inherit;
+  height: 3px;
+  border-bottom: 3px solid green;
+  position: absolute;
+  overflow: auto;
 }
 
 /* Position and sizing of burger button */

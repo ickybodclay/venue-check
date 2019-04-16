@@ -260,6 +260,7 @@ export function App() {
           <VenueTable
             venueData={venueData}
             timeData={TIME_DATA}
+            currentDate={currentDate}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}
             showDelete={showDelete}
