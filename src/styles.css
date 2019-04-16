@@ -108,14 +108,6 @@ input.venue-name-input {
   background: white;
 }
 
-.line{
-  width: inherit;
-  height: 3px;
-  border-bottom: 3px solid green;
-  position: absolute;
-  overflow: auto;
-}
-
 /* Position and sizing of burger button */
 .bm-burger-button {
   position: fixed;
