@@ -111,7 +111,6 @@ export function App() {
   }
 
   function addVenuePopupSubmitted(venue) {
-    //{name: name}
     addVenue(venue);
     togglePopup();
   }

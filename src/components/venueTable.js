@@ -32,13 +32,18 @@ export function VenueTable(props) {
     const events = venueData.map(venue => {
       if (eventsData.hasOwnProperty(venue.name)) {
         let eventFound = null;
+        let eventStart = false;
         eventsData[venue.name].forEach(event => {
           if (event.times.includes(time)) {
             eventFound = event;
+            eventStart = event.times.indexOf(time) == 0;
           }
         });
         if (eventFound) {
-          return <EventCell key={venue.name + time} event={eventFound} />;
+          if (eventStart) {
+            return <EventCell key={venue.name + time} event={eventFound} rowspan={eventFound.times.length} />;
+          }
+          return null;
         }
         return <EventCell key={venue.name + time} event={null} />;
       } else {

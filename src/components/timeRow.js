@@ -20,11 +20,21 @@ export function TimeRow(props) {
       d1.getDate() === d2.getDate();
   }
 
-  function getHourLabel(time) {
-    return timeData[time.getHours() == 0 ? 23 : time.getHours() - 1];
+  function getHourLabel(index) {
+    if (index < 0) {
+      index = timeData.length;
+    }
+    else if (index >= timeData.length) {
+      index = 0;
+    }
+    return timeData[index];
   }
 
-  if (sameDay(time, currentDate) && label === getHourLabel(time)) {
+  function getHourIndex(time) {
+    return time.getHours() == 0 ? 23 : time.getHours() - 1;
+  }
+
+  if (sameDay(time, currentDate) && label === getHourLabel(getHourIndex(time))) {
     return <tr style={ {border : "solid 3px orangered", backgroundColor : "orange"} } >
       {children}
     </tr>;
