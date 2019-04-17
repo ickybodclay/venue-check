@@ -27,6 +27,7 @@ export function VenueTable(props) {
   });
 
   const rows = timeData.map(time => {
+    const cellwidth = 100 / venueData.length; // percent wide
     let children = [];
     children.push(<TimeCell key={time} time={time} />);
     const events = venueData.map(venue => {
@@ -41,13 +42,13 @@ export function VenueTable(props) {
         });
         if (eventFound) {
           if (eventStart) {
-            return <EventCell key={venue.name + time} event={eventFound} rowspan={eventFound.times.length} />;
+            return <EventCell key={venue.name + time} event={eventFound} rowspan={eventFound.times.length} width={cellwidth} />;
           }
           return null;
         }
-        return <EventCell key={venue.name + time} event={null} />;
+        return <EventCell key={venue.name + time} event={null} width={cellwidth} />;
       } else {
-        return <EventCell key={venue.name + time} event={null} />;
+        return <EventCell key={venue.name + time} event={null} width={cellwidth} />;
       }
     });
     children.push(events);
