@@ -27,10 +27,6 @@ export function VenueTable(props) {
   });
 
   const rows = timeData.map(time => {
-    let now = new Date();
-    const highlight = (
-      sameDay(currentDate, now) &&
-      time === getHourTimeLabel(now))
     let children = [];
     children.push(<TimeCell key={time} time={time} />);
     const events = venueData.map(venue => {
@@ -50,18 +46,8 @@ export function VenueTable(props) {
       }
     });
     children.push(events);
-    return <TimeRow key={time} children={children} highlight={highlight}/>;
+    return <TimeRow key={time} label={time} children={children} currentDate={currentDate} timeData={timeData} />;
   });
-
-  function sameDay(d1, d2) {
-    return d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate();
-  }
-
-  function getHourTimeLabel(time) {
-    return timeData[time.getHours() == 0 ? 23 : time.getHours() - 1];
-  }
 
   return (
     <table className="venue-table" align="center">
