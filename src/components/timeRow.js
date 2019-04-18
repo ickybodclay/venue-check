@@ -3,9 +3,8 @@ export function TimeRow(props) {
   const { time, children, selectedDate } = props;
   const [ currentTime, setCurrentTime ] = useState(new Date());
 
-  /*
   useEffect(() => {
-    const intervalId = setInterval(tick, 60 * 1000);
+    const intervalId = setInterval(tick, 5 * 1000);
     return function unmount() {
       clearInterval(intervalId);
     }
@@ -14,7 +13,6 @@ export function TimeRow(props) {
   function tick() {
     setCurrentTime(new Date());
   }
-  */
 
   function sameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
