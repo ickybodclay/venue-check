@@ -6,6 +6,9 @@ import { TimeCell } from "./timeCell";
 import { VenueCell } from "./venueCell";
 import { TimeRow } from "./timeRow";
 
+//utility
+import { isEmpty } from "../utils/jsonUtils";
+
 export function VenueTable(props) {
   const {
     showDelete,
@@ -35,6 +38,10 @@ export function VenueTable(props) {
   function Rows(props) {
     const { timeData, venueData, eventsData } = props;
 
+    if (isEmpty(eventsData)) {
+      return null;
+    }
+
     return timeData.map(time => {
       const rowDate = new Date(
         selectedDate.getFullYear(),
@@ -45,7 +52,6 @@ export function VenueTable(props) {
         0,
         0
       );
-      console.log(`loading row [${rowDate}] ${time.hour}`);
       const cellwidth = 100 / venueData.length; // percent wide
       let children = [];
       children.push(<TimeCell key={time.label} time={time.label} />);
