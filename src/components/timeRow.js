@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 export function TimeRow(props) {
-  const { label, children, currentDate, timeData } = props;
-  const [ time, setTime ] = useState(new Date());
+  const { time, children, selectedDate } = props;
+  const [ currentTime, setCurrentTime ] = useState(new Date());
 
+  /*
   useEffect(() => {
-    const intervalId = setInterval(tick, 1000);
+    const intervalId = setInterval(tick, 60 * 1000);
     return function unmount() {
       clearInterval(intervalId);
     }
   });
 
   function tick() {
-    setTime(new Date());
+    setCurrentTime(new Date());
   }
+  */
 
   function sameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
@@ -20,21 +22,7 @@ export function TimeRow(props) {
       d1.getDate() === d2.getDate();
   }
 
-  function getHourLabel(index) {
-    if (index < 0) {
-      index = timeData.length;
-    }
-    else if (index >= timeData.length) {
-      index = 0;
-    }
-    return timeData[index];
-  }
-
-  function getHourIndex(time) {
-    return time.getHours() == 0 ? 23 : time.getHours() - 1;
-  }
-
-  if (sameDay(time, currentDate) && label === getHourLabel(getHourIndex(time))) {
+  if (sameDay(currentTime, selectedDate) && time.hour == currentTime.getHours()) {
     return <tr style={ {border : "solid 3px orangered", backgroundColor : "orange"} } >
       {children}
     </tr>;

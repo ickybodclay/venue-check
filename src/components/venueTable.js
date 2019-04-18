@@ -7,7 +7,7 @@ import { VenueCell } from "./venueCell";
 import { TimeRow } from "./timeRow";
 
 export function VenueTable(props) {
-  const { showDelete, venueData, timeData, currentDate, eventsData } = props;
+  const { showDelete, venueData, timeData, selectedDate, eventsData } = props;
 
   const handleDeleteClicked = index => {
     const { handleRemoveVenue } = props;
@@ -27,32 +27,50 @@ export function VenueTable(props) {
   });
 
   const rows = timeData.map(time => {
+    const rowDate = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      time.hour,
+      0,
+      0,
+      0
+    );
+    console.log(`loading row [${rowDate}] ${time.hour}`);
     const cellwidth = 100 / venueData.length; // percent wide
     let children = [];
-    children.push(<TimeCell key={time} time={time} />);
+    children.push(<TimeCell key={time.label} time={time.label} />);
     const events = venueData.map(venue => {
       if (eventsData.hasOwnProperty(venue.name)) {
         let eventFound = null;
         let eventStart = false;
-        eventsData[venue.name].forEach(event => {
-          if (event.times.includes(time)) {
-            eventFound = event;
-            eventStart = event.times.indexOf(time) == 0;
+        eventsData[venue.name].some(event => {
+          if (event.startTime && event.endTime &&
+            rowDate.getTime() >= event.startTime.getTime() && 
+            rowDate.getTime() < event.endTime.getTime()) {
+              eventFound = event;
+              eventStart = (event.startTime.getDate() < rowDate.getDate()) ? 
+                time.hour === 0 :
+                rowDate.getHours() === event.startTime.getHours();
+              return true;
           }
+          return false;
         });
         if (eventFound) {
           if (eventStart) {
-            return <EventCell key={venue.name + time} event={eventFound} rowspan={eventFound.times.length} width={cellwidth} />;
+            let endHour = (rowDate.getDate() === eventFound.endTime.getDate()) ? eventFound.endTime.getHours() : 24;
+            let rownSpan = endHour - time.hour;
+            return <EventCell key={venue.name + time.label} event={eventFound} rowspan={rownSpan} width={cellwidth} />;
           }
           return null;
         }
-        return <EventCell key={venue.name + time} event={null} width={cellwidth} />;
+        return <EventCell key={venue.name + time.label} event={null} width={cellwidth} />;
       } else {
-        return <EventCell key={venue.name + time} event={null} width={cellwidth} />;
+        return <EventCell key={venue.name + time.label} event={null} width={cellwidth} />;
       }
     });
     children.push(events);
-    return <TimeRow key={time} label={time} children={children} currentDate={currentDate} timeData={timeData} />;
+    return <TimeRow key={"row-" + time.label} time={time} children={children} selectedDate={selectedDate} />;
   });
 
   return (

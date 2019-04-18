@@ -15,30 +15,30 @@ import { AddVenuePopup } from "./addVenuePopup";
 import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
 
 const TIME_DATA = [
-  "1am",
-  "2am",
-  "3am",
-  "4am",
-  "5am",
-  "6am",
-  "7am",
-  "8am",
-  "9am",
-  "10am",
-  "11am",
-  "12pm",
-  "1pm",
-  "2pm",
-  "3pm",
-  "4pm",
-  "5pm",
-  "6pm",
-  "7pm",
-  "8pm",
-  "9pm",
-  "10pm",
-  "11pm",
-  "12am"
+  { label: "12am", hour: 0 },
+  { label: "1am", hour: 1 },
+  { label: "2am", hour: 2 },
+  { label: "3am", hour: 3 },
+  { label: "4am", hour: 4 },
+  { label: "5am", hour: 5 },
+  { label: "6am", hour: 6 },
+  { label: "7am", hour: 7 },
+  { label: "8am", hour: 8 },
+  { label: "9am", hour: 9 },
+  { label: "10am", hour: 10 },
+  { label: "11am", hour: 11 },
+  { label: "12pm", hour: 12 },
+  { label: "1pm", hour: 13 },
+  { label: "2pm", hour: 14 },
+  { label: "3pm", hour: 15 },
+  { label: "4pm", hour: 16 },
+  { label: "5pm", hour: 17 },
+  { label: "6pm", hour: 18 },
+  { label: "7pm", hour: 19 },
+  { label: "8pm", hour: 20 },
+  { label: "9pm", hour: 21 },
+  { label: "10pm", hour: 22 },
+  { label: "11pm", hour: 23 }
 ];
 
 export function App() {
@@ -47,7 +47,7 @@ export function App() {
   const [venueData, setVenueData] = useState(initVenueData);
   const [eventsData, setEventsData] = useState({});
   const [accessToken, setAccessToken] = useState("");
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -57,7 +57,9 @@ export function App() {
   }, [venueData]);
 
   function handleDateChange(date) {
-    setCurrentDate(date);
+    console.log(`selected date changed ${selectedDate} >> ${date}`);
+
+    setSelectedDate(date);
 
     if (accessToken !== "") {
       fetchEvents(date, accessToken);
@@ -75,7 +77,7 @@ export function App() {
       if (!response.error) {
         setAccessToken(response.Zi.access_token);
         setIsLoggedIn(true);
-        fetchEvents(currentDate, response.Zi.access_token);
+        fetchEvents(selectedDate, response.Zi.access_token);
       } else {
         setIsLoggedIn(false);
       }
@@ -170,26 +172,16 @@ export function App() {
         const venue = event.location.split(",")[0];
         const eventName = event.summary;
         if (event.start && event.end) {
-          // Note: for all day events, dateTime on start and end will be undefined
-          const startTime = new Date(event.start.dateTime);
-          const endTime = new Date(event.end.dateTime);
-
-          let times = TIME_DATA.slice(
-            startTime.getHours() - 1,
-            endTime.getHours() - 1
-          );
-
           if (!eventsData[venue]) {
             eventsData[venue] = [];
           }
 
           eventsData[venue].push({
             name: eventName,
-            times: times,
             venue: venue,
             location: location,
-            startTime: event.start.dateTime,
-            endTime: event.end.dateTime
+            startTime: new Date(event.start.dateTime),
+            endTime: new Date(event.end.dateTime)
           });
         }
       }
@@ -209,7 +201,7 @@ export function App() {
         >
           <h1>Venue Check</h1>
           <DatePicker
-            selected={currentDate}
+            selected={selectedDate}
             onChange={handleDateChange}
             className="date-picker"
             peekNextMonth
@@ -259,7 +251,7 @@ export function App() {
           <VenueTable
             venueData={venueData}
             timeData={TIME_DATA}
-            currentDate={currentDate}
+            selectedDate={selectedDate}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}
             showDelete={showDelete}
