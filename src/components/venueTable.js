@@ -39,10 +39,6 @@ export function VenueTable(props) {
   function Rows(props) {
     const { timeData, venueData, eventsData } = props;
 
-    if (isEmpty(eventsData)) {
-      return null;
-    }
-
     return timeData.map(time => {
       const rowStartDate = new Date(
         selectedDate.getFullYear(),
@@ -69,6 +65,7 @@ export function VenueTable(props) {
         if (eventsData.hasOwnProperty(venue.name)) {
           let eventFound = null;
           let eventStart = false;
+
           eventsData[venue.name].some(event => {
             if (
               event.startTime &&
@@ -76,20 +73,23 @@ export function VenueTable(props) {
               overlap(rowStartDate, rowEndDate, event.startTime, event.endTime)
             ) {
               eventFound = event;
-              eventStart = sameDay(rowStartDate, event.startTime) 
+              eventStart = sameDay(rowStartDate, event.startTime)
                 ? rowStartDate.getHours() == event.startTime.getHours()
                 : rowStartDate.getHours() == 0;
               return true;
             }
             return false;
           });
+
           if (eventFound) {
             if (eventStart) {
               let startHour = sameDay(rowStartDate, eventFound.startTime)
                 ? eventFound.startTime.getHours()
                 : 0;
               let endHour = sameDay(rowStartDate, eventFound.endTime)
-                ? eventFound.endTime.getHours()
+                ? eventFound.endTime.getMinutes() > 0
+                  ? eventFound.endTime.getHours() + 1
+                  : eventFound.endTime.getHours()
                 : 24;
               let rowSpan = endHour - startHour;
               return (
@@ -103,6 +103,7 @@ export function VenueTable(props) {
             }
             return null;
           }
+
           return (
             <EventCell
               key={venue.name + time.label}

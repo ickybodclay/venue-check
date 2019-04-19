@@ -24,6 +24,7 @@ h2 {
   height: 100%;
   width: 95%;
   border-collapse: collapse;
+  border: 1px solid white;
 }
 
 th {
@@ -49,7 +50,7 @@ td.time-cell {
 
 .busy-cell {
   background-color: yellow;
-  border: 1px solid white;
+  
   border-radius: 10px;
 }
 
