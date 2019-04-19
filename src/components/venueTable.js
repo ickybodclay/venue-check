@@ -8,6 +8,7 @@ import { TimeRow } from "./timeRow";
 
 //utility
 import { isEmpty } from "../utils/jsonUtils";
+import { sameDay, overlap } from "../utils/dateUtils";
 
 export function VenueTable(props) {
   const {
@@ -43,11 +44,20 @@ export function VenueTable(props) {
     }
 
     return timeData.map(time => {
-      const rowDate = new Date(
+      const rowStartDate = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
         selectedDate.getDate(),
         time.hour,
+        0,
+        0,
+        0
+      );
+      const rowEndDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        time.hour + 1,
         0,
         0,
         0
@@ -63,30 +73,30 @@ export function VenueTable(props) {
             if (
               event.startTime &&
               event.endTime &&
-              rowDate.getTime() >= event.startTime.getTime() &&
-              rowDate.getTime() < event.endTime.getTime()
+              overlap(rowStartDate, rowEndDate, event.startTime, event.endTime)
             ) {
               eventFound = event;
-              eventStart =
-                event.startTime.getDate() < rowDate.getDate()
-                  ? time.hour === 0
-                  : rowDate.getHours() === event.startTime.getHours();
+              eventStart = sameDay(rowStartDate, event.startTime) 
+                ? rowStartDate.getHours() == event.startTime.getHours()
+                : rowStartDate.getHours() == 0;
               return true;
             }
             return false;
           });
           if (eventFound) {
             if (eventStart) {
-              let endHour =
-                rowDate.getDate() === eventFound.endTime.getDate()
-                  ? eventFound.endTime.getHours()
-                  : 24;
-              let rownSpan = endHour - time.hour;
+              let startHour = sameDay(rowStartDate, eventFound.startTime)
+                ? eventFound.startTime.getHours()
+                : 0;
+              let endHour = sameDay(rowStartDate, eventFound.endTime)
+                ? eventFound.endTime.getHours()
+                : 24;
+              let rowSpan = endHour - startHour;
               return (
                 <EventCell
                   key={venue.name + time.label}
                   event={eventFound}
-                  rowspan={rownSpan}
+                  rowspan={rowSpan}
                   width={cellwidth}
                 />
               );
