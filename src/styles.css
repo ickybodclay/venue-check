@@ -24,11 +24,16 @@ h2 {
   height: 100%;
   width: 95%;
   border-collapse: collapse;
+  border: 1px solid white;
 }
 
 th {
   color: white;
   padding: 10px;
+}
+
+tr:nth-child(even) {
+  background-color: #3f3f3f;
 }
 
 td.event {
@@ -45,7 +50,8 @@ td.time-cell {
 
 .busy-cell {
   background-color: yellow;
-  border: 1px solid white;
+  
+  border-radius: 10px;
 }
 
 .date-picker {
