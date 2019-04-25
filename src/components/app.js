@@ -160,7 +160,7 @@ export function App() {
       parseCalendarEventsResponse(result);
       showLogoutButton();
     } catch (error) {
-      console.log("error: ", +error);
+      console.log(`error: ${error.status}`);
     }
   }
 

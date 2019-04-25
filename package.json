@@ -7,7 +7,8 @@
     "clean": "rm -rf dist/",
     "start": "parcel -p 3000 src/index.html",
     "build": "parcel build src/index.html",
-    "prodStart": "node server.js"
+    "prodStart": "node server.js",
+    "lint": "eslint --max-warnings=0 ."
   },
   "repository": {
     "type": "git",
