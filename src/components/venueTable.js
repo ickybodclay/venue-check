@@ -7,7 +7,6 @@ import { VenueCell } from "./venueCell";
 import { TimeRow } from "./timeRow";
 
 //utility
-import { isEmpty } from "../utils/jsonUtils";
 import { sameDay, overlap } from "../utils/dateUtils";
 
 export function VenueTable(props) {
@@ -74,8 +73,8 @@ export function VenueTable(props) {
             ) {
               eventFound = event;
               eventStart = sameDay(rowStartDate, event.startTime)
-                ? rowStartDate.getHours() == event.startTime.getHours()
-                : rowStartDate.getHours() == 0;
+                ? rowStartDate.getHours() === event.startTime.getHours()
+                : rowStartDate.getHours() === 0;
               return true;
             }
             return false;
@@ -126,9 +125,9 @@ export function VenueTable(props) {
         <TimeRow
           key={"row-" + time.label}
           time={time}
-          children={children}
-          selectedDate={selectedDate}
-        />
+          selectedDate={selectedDate}>
+          {children}
+        </TimeRow>
       );
     });
   }

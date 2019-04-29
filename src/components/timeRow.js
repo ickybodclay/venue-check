@@ -18,7 +18,7 @@ export function TimeRow(props) {
     setCurrentTime(new Date());
   }
   
-  if (sameDay(currentTime, selectedDate) && time.hour == currentTime.getHours()) {
+  if (sameDay(currentTime, selectedDate) && time.hour === currentTime.getHours()) {
     return <tr style={ {border : "solid 3px orangered", backgroundColor : "orange"} } >
       {children}
     </tr>;
