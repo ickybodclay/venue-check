@@ -14,33 +14,6 @@ import { AddVenuePopup } from "./addVenuePopup";
 //utility
 import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
 
-const TIME_DATA = [
-  { label: "12am", hour: 0 },
-  { label: "1am", hour: 1 },
-  { label: "2am", hour: 2 },
-  { label: "3am", hour: 3 },
-  { label: "4am", hour: 4 },
-  { label: "5am", hour: 5 },
-  { label: "6am", hour: 6 },
-  { label: "7am", hour: 7 },
-  { label: "8am", hour: 8 },
-  { label: "9am", hour: 9 },
-  { label: "10am", hour: 10 },
-  { label: "11am", hour: 11 },
-  { label: "12pm", hour: 12 },
-  { label: "1pm", hour: 13 },
-  { label: "2pm", hour: 14 },
-  { label: "3pm", hour: 15 },
-  { label: "4pm", hour: 16 },
-  { label: "5pm", hour: 17 },
-  { label: "6pm", hour: 18 },
-  { label: "7pm", hour: 19 },
-  { label: "8pm", hour: 20 },
-  { label: "9pm", hour: 21 },
-  { label: "10pm", hour: 22 },
-  { label: "11pm", hour: 23 }
-];
-
 export function App() {
   const storageVenueData = JSON.parse(localStorage.getItem("venueData"));
   const initVenueData = storageVenueData ? storageVenueData : [];
@@ -177,11 +150,11 @@ export function App() {
           }
 
           eventsData[venue].push({
-            name: eventName,
+            title: eventName,
             venue: venue,
             location: location,
-            startTime: new Date(event.start.dateTime),
-            endTime: new Date(event.end.dateTime)
+            start: new Date(event.start.dateTime),
+            end: new Date(event.end.dateTime)
           });
         }
       }
@@ -250,7 +223,6 @@ export function App() {
           <h2 id="date-label"></h2>
           <VenueTable
             venueData={venueData}
-            timeData={TIME_DATA}
             selectedDate={selectedDate}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}

@@ -3,17 +3,25 @@ import React from "react";
 // components
 import { EventCell } from "./eventCell";
 import { TimeCell } from "./timeCell";
-import { VenueCell } from "./venueCell";
 import { TimeRow } from "./timeRow";
+import { VenueCell } from "./venueCell";
 
-//utility
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+
+// style
+import "@fullcalendar/core/main.css";
+import "@fullcalendar/daygrid/main.css";
+import "@fullcalendar/timegrid/main.css";
+
+// utility
 import { sameDay, overlap } from "../utils/dateUtils";
 
 export function VenueTable(props) {
   const {
     showDelete,
     venueData,
-    timeData,
     selectedDate,
     eventsData,
     handleRemoveVenue
@@ -36,100 +44,24 @@ export function VenueTable(props) {
   }
 
   function Rows(props) {
-    const { timeData, venueData, eventsData } = props;
+    const { venueData, eventsData } = props;
 
-    return timeData.map(time => {
-      const rowStartDate = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate(),
-        time.hour,
-        0,
-        0,
-        0
-      );
-      const rowEndDate = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate(),
-        time.hour + 1,
-        0,
-        0,
-        0
-      );
-      const cellwidth = 100 / venueData.length; // percent wide
-      let children = [];
-      children.push(<TimeCell key={time.label} time={time.label} />);
-      const events = venueData.map(venue => {
-        if (eventsData.hasOwnProperty(venue.name)) {
-          let eventFound = null;
-          let eventStart = false;
-
-          eventsData[venue.name].some(event => {
-            if (
-              event.startTime &&
-              event.endTime &&
-              overlap(rowStartDate, rowEndDate, event.startTime, event.endTime)
-            ) {
-              eventFound = event;
-              eventStart = sameDay(rowStartDate, event.startTime)
-                ? rowStartDate.getHours() === event.startTime.getHours()
-                : rowStartDate.getHours() === 0;
-              return true;
-            }
-            return false;
-          });
-
-          if (eventFound) {
-            if (eventStart) {
-              let startHour = sameDay(rowStartDate, eventFound.startTime)
-                ? eventFound.startTime.getHours()
-                : 0;
-              let endHour = sameDay(rowStartDate, eventFound.endTime)
-                ? eventFound.endTime.getMinutes() > 0
-                  ? eventFound.endTime.getHours() + 1
-                  : eventFound.endTime.getHours()
-                : 24;
-              let rowSpan = endHour - startHour;
-              return (
-                <EventCell
-                  key={venue.name + time.label}
-                  event={eventFound}
-                  rowspan={rowSpan}
-                  width={cellwidth}
-                />
-              );
-            }
-            return null;
-          }
-
-          return (
-            <EventCell
-              key={venue.name + time.label}
-              event={null}
-              width={cellwidth}
-            />
-          );
-        } else {
-          return (
-            <EventCell
-              key={venue.name + time.label}
-              event={null}
-              width={cellwidth}
-            />
-          );
-        }
-      });
-      children.push(events);
+    const daygrids = venueData.map(venue => {
       return (
-        <TimeRow
-          key={"row-" + time.label}
-          time={time}
-          selectedDate={selectedDate}>
-          {children}
-        </TimeRow>
+        <td key={venue.name}>
+          <FullCalendar
+            defaultView="timeGridDay"
+            defaultDate={selectedDate}
+            header={null}
+            contentHeight="auto"
+            plugins={[dayGridPlugin, timeGridPlugin]}
+            events={eventsData[venue.name]}
+          />
+        </td>
       );
     });
+
+    return <tr><td/>{daygrids}</tr>;
   }
 
   return (
@@ -145,11 +77,7 @@ export function VenueTable(props) {
         </tr>
       </thead>
       <tbody>
-        <Rows
-          timeData={timeData}
-          venueData={venueData}
-          eventsData={eventsData}
-        />
+        <Rows venueData={venueData} eventsData={eventsData} />
       </tbody>
     </table>
   );

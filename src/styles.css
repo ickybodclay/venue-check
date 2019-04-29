@@ -23,8 +23,10 @@ h2 {
   margin-top: 50px;
   height: 100%;
   width: 95%;
-  border-collapse: collapse;
-  border: 1px solid white;
+}
+
+.venue-table tr:nth-child(even) {
+  background-color: #3f3f3f;
 }
 
 th {
@@ -32,26 +34,12 @@ th {
   padding: 10px;
 }
 
-tr:nth-child(even) {
-  background-color: #3f3f3f;
-}
-
-td.event {
-  border: 1px solid white;
-}
-
-td.time-cell {
-  width: 30px;
-  font-weight: bold;
+.fc-axis {
   color: white;
-  padding: 10px;
-  text-align: left;
 }
 
-.busy-cell {
-  background-color: yellow;
-  
-  border-radius: 10px;
+.fc-time {
+  color: white;
 }
 
 .date-picker {
