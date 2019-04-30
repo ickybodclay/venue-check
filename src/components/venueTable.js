@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // components
 import { VenueCell } from "./venueCell";
@@ -23,23 +23,28 @@ export function VenueTable(props) {
   function Columns(props) {
     const { venueData, showDelete, handleRemoveVenue } = props;
 
-    return venueData.map((venue, index) => {
-      return (
-        <VenueCell
-          key={venue.name}
-          venueName={venue.name}
-          venueIndex={index}
-          showDelete={showDelete}
-          onDeleteClicked={handleRemoveVenue}
-        />
-      );
-    });
+    return (
+      <tr>
+        <th />
+        {venueData.map((venue, index) => {
+          return (
+            <VenueCell
+              key={venue.name}
+              venueName={venue.name}
+              venueIndex={index}
+              showDelete={showDelete}
+              onDeleteClicked={handleRemoveVenue}
+            />
+          );
+        })}
+      </tr>
+    );
   }
 
   function Rows(props) {
-    const { venueData, eventsData } = props;
+    const { venueData, eventsData, selectedDate } = props;
 
-    const daygrids = venueData.map(venue => {
+    let rows = venueData.map(venue => {
       return (
         <td key={venue.name}>
           <FullCalendar
@@ -49,28 +54,36 @@ export function VenueTable(props) {
             contentHeight="auto"
             plugins={[dayGridPlugin, timeGridPlugin]}
             events={eventsData[venue.name]}
+            nowIndicator="true"
+            timeZone="local"
           />
         </td>
       );
     });
 
-    return <tr><td/>{daygrids}</tr>;
+    return (
+      <tr>
+        <td />
+        {rows}
+      </tr>
+    );
   }
 
   return (
     <table className="venue-table" align="center">
       <thead>
-        <tr>
-          <th />
-          <Columns
-            venueData={venueData}
-            showDelete={showDelete}
-            handleRemoveVenue={handleRemoveVenue}
-          />
-        </tr>
+        <Columns
+          venueData={venueData}
+          showDelete={showDelete}
+          handleRemoveVenue={handleRemoveVenue}
+        />
       </thead>
       <tbody>
-        <Rows venueData={venueData} eventsData={eventsData} />
+        <Rows
+          venueData={venueData}
+          eventsData={eventsData}
+          selectedDate={selectedDate}
+        />
       </tbody>
     </table>
   );

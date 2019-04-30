@@ -5,7 +5,7 @@ import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { scaleRotate as Menu } from "react-burger-menu";
+import { slide as Menu } from "react-burger-menu";
 
 //components
 import { VenueTable } from "./venueTable";
@@ -153,8 +153,8 @@ export function App() {
             title: eventName,
             venue: venue,
             location: location,
-            start: new Date(event.start.dateTime),
-            end: new Date(event.end.dateTime)
+            start: event.start.dateTime,
+            end: event.end.dateTime
           });
         }
       }

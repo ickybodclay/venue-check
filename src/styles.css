@@ -23,11 +23,14 @@ h2 {
   margin-top: 50px;
   height: 100%;
   width: 95%;
+  background-color: #333;
 }
 
+/*
 .venue-table tr:nth-child(even) {
   background-color: #3f3f3f;
 }
+*/
 
 th {
   color: white;
@@ -90,6 +93,7 @@ input.venue-name-input {
   bottom: 0;
   margin: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
 }
 
 .popup_inner {
