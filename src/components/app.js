@@ -19,7 +19,8 @@ export function App() {
   const initVenueData = storageVenueData ? storageVenueData : [];
   const [venueData, setVenueData] = useState(initVenueData);
   const [eventsData, setEventsData] = useState({});
-  const [accessToken, setAccessToken] = useState("");
+  const [googleUser, setGoogleUser] = useState();
+  const [tokenExpiration, setTokenExpiration] = useState(-1);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,28 +30,51 @@ export function App() {
     localStorage.setItem("venueData", JSON.stringify(venueData));
   }, [venueData]);
 
-  function handleDateChange(date) {
-    console.log(`selected date changed ${selectedDate} >> ${date}`);
-
-    setSelectedDate(date);
-
-    if (accessToken !== "") {
-      fetchEvents(date, accessToken);
-    }
-  }
-
   function removeVenueClicked() {
     if (venueData.length > 0) {
       setShowDelete(!showDelete);
     }
   }
 
+  function handleDateChange(date) {
+    console.log(`selected date changed ${selectedDate} >> ${date}`);
+
+    setSelectedDate(date);
+
+    if (hasValidToken()) {
+      fetchEvents(date, googleUser.tokenObj.access_token);
+    }
+    else {
+      refreshLogin();
+    }
+  }
+
+  function hasValidToken() {
+    return googleUser && !isTokenExpired(new Date());
+  }
+
+  function isTokenExpired(date) {
+    return date.getTime() > tokenExpiration;
+  }
+
+  async function refreshLogin() {
+    if (googleUser) {
+      try {
+        const response = await googleUser.reloadAuthResponse();
+        handleGoogleLoginResponse(response);
+      } catch (error) {
+        console.log(`error: ${error.status}`);
+      }
+    }
+  }
+
   function handleGoogleLoginResponse(response) {
     if (response) {
       if (!response.error) {
-        setAccessToken(response.Zi.access_token);
+        setGoogleUser(response);
+        setTokenExpiration(response.tokenObj.expires_at);
         setIsLoggedIn(true);
-        fetchEvents(selectedDate, response.Zi.access_token);
+        fetchEvents(selectedDate, response.tokenObj.access_token);
       } else {
         setIsLoggedIn(false);
       }
