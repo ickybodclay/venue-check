@@ -201,6 +201,7 @@ export function App() {
           {!isLoggedIn && (
             <div id="googleLoginButton">
               <GoogleLogin
+                theme="dark"
                 clientId={getGoogleClientId()}
                 buttonText="Login"
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
@@ -213,6 +214,7 @@ export function App() {
           {isLoggedIn && (
             <div id="googleLogoutButton">
               <GoogleLogout
+                theme="dark"
                 buttonText="Logout"
                 onLogoutSuccess={handleLogout}
               />

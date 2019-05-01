@@ -20,20 +20,11 @@ h2 {
 }
 
 .venue-table {
-  margin-top: 50px;
-  height: 100%;
   width: 95%;
-  background-color: #333;
 }
-
-/*
-.venue-table tr:nth-child(even) {
-  background-color: #3f3f3f;
-}
-*/
 
 th {
-  color: white;
+  color: #E6EED6;
   padding: 10px;
 }
 
@@ -41,12 +32,39 @@ th {
   visibility: hidden;
 }
 
-.fc-axis {
+.fc-time {
+  color: #E6EED6;
+}
+
+/* https://coolors.co/222222-ff1493-a288a6-84acce-3066be */
+
+.fc-event {
+  background-color: #3066BE;
+  border: 1px solid #84ACCE;
+}
+
+.fc-unthemed td.fc-axis {
   color: white;
 }
 
-.fc-time {
-  color: white;
+.fc-unthemed tr td.fc-axis {
+  background-color: #333;
+}
+
+.fc-unthemed tr.fc-minor td.fc-axis {
+  background-color: #444;
+}
+
+.fc-unthemed td.fc-today {
+  background-color: #84ACCE;
+}
+
+.fc-unthemed td.fc-past {
+  background-color: #333;
+}
+
+.fc-unthemed td.fc-future {
+  background-color: #333;
 }
 
 .date-picker {
