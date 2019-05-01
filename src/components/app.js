@@ -37,15 +37,13 @@ export function App() {
   }
 
   function handleDateChange(date) {
-    console.log(`selected date changed ${selectedDate} >> ${date}`);
-
     setSelectedDate(date);
 
     if (hasValidToken()) {
       fetchEvents(date, googleUser.tokenObj.access_token);
     }
     else {
-      refreshLogin();
+      refreshLogin(date);
     }
   }
 
@@ -57,28 +55,39 @@ export function App() {
     return date.getTime() > tokenExpiration;
   }
 
-  async function refreshLogin() {
+  async function refreshLogin(date) {
     if (googleUser) {
       try {
         const response = await googleUser.reloadAuthResponse();
-        handleGoogleLoginResponse(response);
+        handleReloadAuthResponse(date, response);
       } catch (error) {
-        console.log(`error: ${error.status}`);
+        console.log(`refreshLogin> error = ${error.status}`);
       }
     }
   }
 
+  function handleReloadAuthResponse(date, response) {
+    if (response && !response.error) {
+      googleUser.tokenObj = response;
+      setGoogleUser(googleUser);
+      setTokenExpiration(response.expires_at);
+      setIsLoggedIn(true);
+      fetchEvents(date, response.access_token);
+    }
+    else {
+      console.log(`handleReloadAuthResponse> error = ${response && response.error}`);
+      setIsLoggedIn(false);
+    }
+  }
+
   function handleGoogleLoginResponse(response) {
-    if (response) {
-      if (!response.error) {
-        setGoogleUser(response);
-        setTokenExpiration(response.tokenObj.expires_at);
-        setIsLoggedIn(true);
-        fetchEvents(selectedDate, response.tokenObj.access_token);
-      } else {
-        setIsLoggedIn(false);
-      }
+    if (response && !response.error) {
+      setGoogleUser(response);
+      setTokenExpiration(response.tokenObj.expires_at);
+      setIsLoggedIn(true);
+      fetchEvents(selectedDate, response.tokenObj.access_token);
     } else {
+      console.log(`handleGoogleLoginResponse> error = ${response && response.error}`);
       setIsLoggedIn(false);
     }
   }
@@ -157,7 +166,7 @@ export function App() {
       parseCalendarEventsResponse(result);
       showLogoutButton();
     } catch (error) {
-      console.log(`error: ${error.status}`);
+      console.log(`fetchEvents> error = ${error.status}`);
     }
   }
 
