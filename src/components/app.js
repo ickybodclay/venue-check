@@ -128,8 +128,6 @@ export function App() {
   }
 
   async function fetchEvents(date, token) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById("date-label").innerHTML = date.toLocaleDateString('en-US', options);
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -255,7 +253,6 @@ export function App() {
           )}
         </Menu>
         <main id="page-wrap">
-          <h2 id="date-label"></h2>
           <VenueTable
             venueData={venueData}
             selectedDate={selectedDate}

@@ -5,6 +5,7 @@
 body {
   background-color: #222;
   margin: 0px;
+  font-family: 'Source Sans Pro';
 }
 
 h1 {
@@ -25,7 +26,6 @@ h2 {
 
 th {
   color: #E6EED6;
-  padding: 10px;
 }
 
 .fc-head {
