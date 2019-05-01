@@ -49,6 +49,11 @@ export function VenueTable(props) {
             contentHeight="auto"
             plugins={[dayGridPlugin, timeGridPlugin]}
             events={eventsData[venue.name]}
+            eventTimeFormat={{
+              hour: "numeric",
+              minute: "2-digit",
+              meridiem: "short"
+            }}
             nowIndicator="true"
             timeZone="local"
           />
@@ -65,13 +70,20 @@ export function VenueTable(props) {
   }
 
   function getFormattedSelectedDate() {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return selectedDate.toLocaleDateString('en-US', options);
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    };
+    return selectedDate.toLocaleDateString("en-US", options);
   }
 
   return (
     <table className="venue-table" align="center">
-      <caption><h2 id="date-label">{getFormattedSelectedDate()}</h2></caption>
+      <caption>
+        <h2 id="date-label">{getFormattedSelectedDate()}</h2>
+      </caption>
       <thead>
         <Columns
           venueData={venueData}
