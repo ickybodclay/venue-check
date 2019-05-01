@@ -1,4 +1,9 @@
 import ReactDOM from "react-dom";
+
+// style
+import "@fullcalendar/core/main.css";
+import "@fullcalendar/daygrid/main.css";
+import "@fullcalendar/timegrid/main.css";
 import "./styles.css";
 
 import React from "react";

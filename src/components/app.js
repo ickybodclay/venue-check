@@ -5,7 +5,7 @@ import { GoogleLogin } from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { scaleRotate as Menu } from "react-burger-menu";
+import { slide as Menu } from "react-burger-menu";
 
 //components
 import { VenueTable } from "./venueTable";
@@ -14,39 +14,13 @@ import { AddVenuePopup } from "./addVenuePopup";
 //utility
 import { getGoogleApiKey, getGoogleClientId } from "../utils/googleUtils";
 
-const TIME_DATA = [
-  { label: "12am", hour: 0 },
-  { label: "1am", hour: 1 },
-  { label: "2am", hour: 2 },
-  { label: "3am", hour: 3 },
-  { label: "4am", hour: 4 },
-  { label: "5am", hour: 5 },
-  { label: "6am", hour: 6 },
-  { label: "7am", hour: 7 },
-  { label: "8am", hour: 8 },
-  { label: "9am", hour: 9 },
-  { label: "10am", hour: 10 },
-  { label: "11am", hour: 11 },
-  { label: "12pm", hour: 12 },
-  { label: "1pm", hour: 13 },
-  { label: "2pm", hour: 14 },
-  { label: "3pm", hour: 15 },
-  { label: "4pm", hour: 16 },
-  { label: "5pm", hour: 17 },
-  { label: "6pm", hour: 18 },
-  { label: "7pm", hour: 19 },
-  { label: "8pm", hour: 20 },
-  { label: "9pm", hour: 21 },
-  { label: "10pm", hour: 22 },
-  { label: "11pm", hour: 23 }
-];
-
 export function App() {
   const storageVenueData = JSON.parse(localStorage.getItem("venueData"));
   const initVenueData = storageVenueData ? storageVenueData : [];
   const [venueData, setVenueData] = useState(initVenueData);
   const [eventsData, setEventsData] = useState({});
-  const [accessToken, setAccessToken] = useState("");
+  const [googleUser, setGoogleUser] = useState();
+  const [tokenExpiration, setTokenExpiration] = useState(-1);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,32 +30,64 @@ export function App() {
     localStorage.setItem("venueData", JSON.stringify(venueData));
   }, [venueData]);
 
-  function handleDateChange(date) {
-    console.log(`selected date changed ${selectedDate} >> ${date}`);
-
-    setSelectedDate(date);
-
-    if (accessToken !== "") {
-      fetchEvents(date, accessToken);
-    }
-  }
-
   function removeVenueClicked() {
     if (venueData.length > 0) {
       setShowDelete(!showDelete);
     }
   }
 
-  function handleGoogleLoginResponse(response) {
-    if (response) {
-      if (!response.error) {
-        setAccessToken(response.Zi.access_token);
-        setIsLoggedIn(true);
-        fetchEvents(selectedDate, response.Zi.access_token);
-      } else {
-        setIsLoggedIn(false);
+  function handleDateChange(date) {
+    setSelectedDate(date);
+
+    if (hasValidToken()) {
+      fetchEvents(date, googleUser.tokenObj.access_token);
+    }
+    else {
+      refreshLogin(date);
+    }
+  }
+
+  function hasValidToken() {
+    return googleUser && !isTokenExpired(new Date());
+  }
+
+  function isTokenExpired(date) {
+    return date.getTime() > tokenExpiration;
+  }
+
+  async function refreshLogin(date) {
+    if (googleUser) {
+      try {
+        const response = await googleUser.reloadAuthResponse();
+        handleReloadAuthResponse(date, response);
+      } catch (error) {
+        console.log(`refreshLogin> error = ${error.status}`);
       }
+    }
+  }
+
+  function handleReloadAuthResponse(date, response) {
+    if (response && !response.error) {
+      googleUser.tokenObj = response;
+      setGoogleUser(googleUser);
+      setTokenExpiration(response.expires_at);
+      setIsLoggedIn(true);
+      fetchEvents(date, response.access_token);
+    }
+    else {
+      console.log(`handleReloadAuthResponse> error = ${response && response.error}`);
+      setIsLoggedIn(false);
+    }
+  }
+
+  function handleGoogleLoginResponse(response) {
+    if (response && !response.error) {
+      setGoogleUser(response);
+      setTokenExpiration(response.tokenObj.expires_at);
+      setIsLoggedIn(true);
+      fetchEvents(selectedDate, response.tokenObj.access_token);
     } else {
+      console.log(`handleGoogleLoginResponse> error = ${response && response.error}`);
       setIsLoggedIn(false);
     }
   }
@@ -122,8 +128,6 @@ export function App() {
   }
 
   async function fetchEvents(date, token) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById("date-label").innerHTML = date.toLocaleDateString('en-US', options);
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -160,7 +164,7 @@ export function App() {
       parseCalendarEventsResponse(result);
       showLogoutButton();
     } catch (error) {
-      console.log(`error: ${error.status}`);
+      console.log(`fetchEvents> error = ${error.status}`);
     }
   }
 
@@ -177,11 +181,11 @@ export function App() {
           }
 
           eventsData[venue].push({
-            name: eventName,
+            title: eventName,
             venue: venue,
             location: location,
-            startTime: new Date(event.start.dateTime),
-            endTime: new Date(event.end.dateTime)
+            start: event.start.dateTime || event.start.date,
+            end: event.end.dateTime || event.end.date
           });
         }
       }
@@ -228,6 +232,7 @@ export function App() {
           {!isLoggedIn && (
             <div id="googleLoginButton">
               <GoogleLogin
+                theme="dark"
                 clientId={getGoogleClientId()}
                 buttonText="Login"
                 scope="profile email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events.readonly"
@@ -240,6 +245,7 @@ export function App() {
           {isLoggedIn && (
             <div id="googleLogoutButton">
               <GoogleLogout
+                theme="dark"
                 buttonText="Logout"
                 onLogoutSuccess={handleLogout}
               />
@@ -247,10 +253,8 @@ export function App() {
           )}
         </Menu>
         <main id="page-wrap">
-          <h2 id="date-label"></h2>
           <VenueTable
             venueData={venueData}
-            timeData={TIME_DATA}
             selectedDate={selectedDate}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}

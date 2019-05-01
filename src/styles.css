@@ -5,6 +5,7 @@
 body {
   background-color: #222;
   margin: 0px;
+  font-family: 'Source Sans Pro';
 }
 
 h1 {
@@ -20,38 +21,50 @@ h2 {
 }
 
 .venue-table {
-  margin-top: 50px;
-  height: 100%;
   width: 95%;
-  border-collapse: collapse;
-  border: 1px solid white;
 }
 
 th {
+  color: #E6EED6;
+}
+
+.fc-head {
+  visibility: hidden;
+}
+
+.fc-time {
+  color: #E6EED6;
+}
+
+/* https://coolors.co/222222-ff1493-a288a6-84acce-3066be */
+
+.fc-event {
+  background-color: #3066BE;
+  border: 1px solid #84ACCE;
+}
+
+.fc-unthemed td.fc-axis {
   color: white;
-  padding: 10px;
 }
 
-tr:nth-child(even) {
-  background-color: #3f3f3f;
+.fc-unthemed tr td.fc-axis {
+  background-color: #333;
 }
 
-td.event {
-  border: 1px solid white;
+.fc-unthemed tr.fc-minor td.fc-axis {
+  background-color: #444;
 }
 
-td.time-cell {
-  width: 30px;
-  font-weight: bold;
-  color: white;
-  padding: 10px;
-  text-align: left;
+.fc-unthemed td.fc-today {
+  background-color: #84ACCE;
 }
 
-.busy-cell {
-  background-color: yellow;
-  
-  border-radius: 10px;
+.fc-unthemed td.fc-past {
+  background-color: #333;
+}
+
+.fc-unthemed td.fc-future {
+  background-color: #333;
 }
 
 .date-picker {
@@ -98,6 +111,7 @@ input.venue-name-input {
   bottom: 0;
   margin: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
 }
 
 .popup_inner {
