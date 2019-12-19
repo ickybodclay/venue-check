@@ -133,7 +133,7 @@ export function App() {
     setShowPopup(!showPopup);
   }
 
-  async function fetchEvents(token, date, calendar="primary") {
+  async function fetchEvents(token, date, cal="primary") {
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -154,7 +154,7 @@ export function App() {
       0
     );
 
-    const calendar = encodeURIComponent(calendar);
+    const calendar = encodeURIComponent(cal);
     const timeMin = encodeURIComponent(start.toISOString());
     const timeMax = encodeURIComponent(end.toISOString());
     const fields = encodeURIComponent("items(end,location,start,summary)");
@@ -212,8 +212,6 @@ export function App() {
       });
       const result = await response.json();
       parseListCalendarsResponse(result);
-      // TODO: populate calendar selection drop down
-      console.log(`fetchCalendars> ${JSON.stringify(calendarsData)}`);
     } catch (error) {
       console.log(`fetchCalendars> error = ${error.status}`);
     }
@@ -224,6 +222,8 @@ export function App() {
     response.items.forEach(calendar => {
       calendarsData.push(calendar.id);
     });
+    // TODO: populate calendar selection drop down
+    console.log(`parseListCalendarsResponse> ${JSON.stringify(calendarsData)}`);
     setCalendarsData(calendarsData);
   }
 
