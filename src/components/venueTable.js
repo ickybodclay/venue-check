@@ -46,7 +46,7 @@ export function VenueTable(props) {
             defaultView="timeGridDay"
             defaultDate={selectedDate}
             header={null}
-            contentHeight="auto"
+            height="parent"
             plugins={[dayGridPlugin, timeGridPlugin]}
             events={eventsData[venue.name]}
             eventTimeFormat={{

@@ -18,10 +18,12 @@ export function App() {
   const storageVenueData = JSON.parse(localStorage.getItem("venueData"));
   const initVenueData = storageVenueData ? storageVenueData : [];
   const [venueData, setVenueData] = useState(initVenueData);
+  const [calendarsData, setCalendarsData] = useState([]);
   const [eventsData, setEventsData] = useState({});
   const [googleUser, setGoogleUser] = useState();
   const [tokenExpiration, setTokenExpiration] = useState(-1);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCalendar, setSelectedCalendar] = useState();
   const [showPopup, setShowPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -40,7 +42,7 @@ export function App() {
     setSelectedDate(date);
 
     if (hasValidToken()) {
-      fetchEvents(date, googleUser.tokenObj.access_token);
+      fetchEvents(googleUser.tokenObj.access_token, date);
     }
     else {
       refreshLogin(date);
@@ -72,7 +74,9 @@ export function App() {
       setGoogleUser(googleUser);
       setTokenExpiration(response.expires_at);
       setIsLoggedIn(true);
-      fetchEvents(date, response.access_token);
+      const token = response.access_token
+      fetchCalendars(token);
+      fetchEvents(token, date);
     }
     else {
       console.log(`handleReloadAuthResponse> error = ${response && response.error}`);
@@ -85,7 +89,9 @@ export function App() {
       setGoogleUser(response);
       setTokenExpiration(response.tokenObj.expires_at);
       setIsLoggedIn(true);
-      fetchEvents(selectedDate, response.tokenObj.access_token);
+      const token = response.tokenObj.access_token;
+      fetchCalendars(token);
+      fetchEvents(token, selectedDate);
     } else {
       console.log(`handleGoogleLoginResponse> error = ${response && response.error}`);
       setIsLoggedIn(false);
@@ -127,7 +133,7 @@ export function App() {
     setShowPopup(!showPopup);
   }
 
-  async function fetchEvents(date, token) {
+  async function fetchEvents(token, date, calendar="primary") {
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -148,7 +154,7 @@ export function App() {
       0
     );
 
-    const calendar = encodeURIComponent("primary");
+    const calendar = encodeURIComponent(calendar);
     const timeMin = encodeURIComponent(start.toISOString());
     const timeMax = encodeURIComponent(end.toISOString());
     const fields = encodeURIComponent("items(end,location,start,summary)");
@@ -173,25 +179,52 @@ export function App() {
     response.items.forEach(event => {
       if (event.location) {
         const location = event.location;
-        const venue = event.location.split(",")[0];
-        const eventName = event.summary;
-        if (event.start && event.end) {
-          if (!eventsData[venue]) {
-            eventsData[venue] = [];
-          }
+        const venue = venueData.find(v => location.includes(v.name));
+        if (venue) {
+          const eventName = event.summary;
+          if (event.start && event.end) {
+            if (!eventsData[venue.name]) {
+              eventsData[venue.name] = [];
+            }
 
-          eventsData[venue].push({
-            title: eventName,
-            venue: venue,
-            location: location,
-            start: event.start.dateTime || event.start.date,
-            end: event.end.dateTime || event.end.date
-          });
+            eventsData[venue.name].push({
+              title: eventName,
+              venue: venue.name,
+              location: location,
+              start: event.start.dateTime || event.start.date,
+              end: event.end.dateTime || event.end.date
+            });
+          }
         }
       }
     });
 
     setEventsData(eventsData);
+  }
+
+  async function fetchCalendars(token) {
+    setCalendarsData([]);
+    const calendarListRequest = `https://www.googleapis.com/calendar/v3/users/me/calendarList`;
+    try {
+      const response = await fetch(calendarListRequest, {
+        method: "GET",
+        headers: new Headers({ Authorization: "Bearer " + token })
+      });
+      const result = await response.json();
+      parseListCalendarsResponse(result);
+      // TODO: populate calendar selection drop down
+      console.log(`fetchCalendars> ${JSON.stringify(calendarsData)}`);
+    } catch (error) {
+      console.log(`fetchCalendars> error = ${error.status}`);
+    }
+  }
+
+  function parseListCalendarsResponse(response) {
+    let calendarsData = [];
+    response.items.forEach(calendar => {
+      calendarsData.push(calendar.id);
+    });
+    setCalendarsData(calendarsData);
   }
 
   return (
