@@ -20,6 +20,10 @@ h2 {
   vertical-align: center;
 }
 
+select {
+  width: -webkit-fill-available;
+}
+
 .venue-table {
   width: 95%;
 }

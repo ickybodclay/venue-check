@@ -76,7 +76,10 @@ export function App() {
       setIsLoggedIn(true);
       const token = response.access_token
       fetchCalendars(token);
-      fetchEvents(token, date);
+      if (selectedCalendar)
+        fetchEvents(token, date, selectedCalendar);
+      else
+        fetchEvents(token, date);
     }
     else {
       console.log(`handleReloadAuthResponse> error = ${response && response.error}`);
@@ -219,12 +222,28 @@ export function App() {
 
   function parseListCalendarsResponse(response) {
     let calendarsData = [];
-    response.items.forEach(calendar => {
-      calendarsData.push(calendar.id);
+    calendarsData = response.items.map(calendar => {
+      return {
+        id: calendar.id,
+        name: calendar.summary
+      };
     });
-    // TODO: populate calendar selection drop down
-    console.log(`parseListCalendarsResponse> ${JSON.stringify(calendarsData)}`);
     setCalendarsData(calendarsData);
+  }
+
+  function getCalendarOptions() {
+    let optionItems = calendarsData.map((calendar) =>
+        <option key={calendar.id} id={calendar.id}>{calendar.name}</option>
+    );
+    return optionItems;
+  }
+
+  function onCalendarChange(event) {
+    const name = event.target.value;
+    let cal = {};
+    cal = calendarsData.find(calendar => calendar.name == name)
+    setSelectedCalendar(cal);
+    fetchEvents(token, selectedDate, selectedCalendar);
   }
 
   return (
@@ -246,6 +265,11 @@ export function App() {
             showYearDropdown
             dropdownMode="select"
           />
+          <br />
+          <br />
+          <select onChange={onCalendarChange}>
+            {getCalendarOptions()}
+          </select>
           <br />
           <br />
           <button className="add" onClick={togglePopup}>
@@ -289,6 +313,7 @@ export function App() {
           <VenueTable
             venueData={venueData}
             selectedDate={selectedDate}
+            selectedCalendar={selectedCalendar}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}
             showDelete={showDelete}
