@@ -243,7 +243,7 @@ export function App() {
     let cal = {};
     cal = calendarsData.find(calendar => calendar.name == name)
     setSelectedCalendar(cal);
-    fetchEvents(token, selectedDate, selectedCalendar);
+    fetchEvents(googleUser.tokenObj.access_token, selectedDate, cal.id);
   }
 
   return (

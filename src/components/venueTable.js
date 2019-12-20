@@ -81,10 +81,10 @@ export function VenueTable(props) {
   }
 
   function getFormattedSelectedCalendar() {
-    if (selectedCalendar == undefined) {
-      return "primary";
+    if (selectedCalendar) {
+      return selectedCalendar.name;
     }
-    return selectedCalendar.name;
+    return "primary";
   }
 
   return (
