@@ -10,6 +10,7 @@ export function VenueTable(props) {
   const {
     showDelete,
     venueData,
+    selectedCalendar,
     selectedDate,
     eventsData,
     handleRemoveVenue
@@ -46,7 +47,7 @@ export function VenueTable(props) {
             defaultView="timeGridDay"
             defaultDate={selectedDate}
             header={null}
-            contentHeight="auto"
+            height="parent"
             plugins={[dayGridPlugin, timeGridPlugin]}
             events={eventsData[venue.name]}
             eventTimeFormat={{
@@ -79,10 +80,17 @@ export function VenueTable(props) {
     return selectedDate.toLocaleDateString("en-US", options);
   }
 
+  function getFormattedSelectedCalendar() {
+    if (selectedCalendar) {
+      return selectedCalendar.name;
+    }
+    return "primary";
+  }
+
   return (
     <table className="venue-table" align="center">
       <caption>
-        <h2 id="date-label">{getFormattedSelectedDate()}</h2>
+        <h2 id="date-label">{getFormattedSelectedDate() + " (" + getFormattedSelectedCalendar() + ")"}</h2>
       </caption>
       <thead>
         <Columns

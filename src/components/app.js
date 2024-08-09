@@ -18,10 +18,12 @@ export function App() {
   const storageVenueData = JSON.parse(localStorage.getItem("venueData"));
   const initVenueData = storageVenueData ? storageVenueData : [];
   const [venueData, setVenueData] = useState(initVenueData);
+  const [calendarsData, setCalendarsData] = useState([]);
   const [eventsData, setEventsData] = useState({});
   const [googleUser, setGoogleUser] = useState();
   const [tokenExpiration, setTokenExpiration] = useState(-1);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCalendar, setSelectedCalendar] = useState();
   const [showPopup, setShowPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -40,7 +42,7 @@ export function App() {
     setSelectedDate(date);
 
     if (hasValidToken()) {
-      fetchEvents(date, googleUser.tokenObj.access_token);
+      fetchEvents(googleUser.tokenObj.access_token, date);
     }
     else {
       refreshLogin(date);
@@ -72,7 +74,12 @@ export function App() {
       setGoogleUser(googleUser);
       setTokenExpiration(response.expires_at);
       setIsLoggedIn(true);
-      fetchEvents(date, response.access_token);
+      const token = response.access_token
+      fetchCalendars(token);
+      if (selectedCalendar)
+        fetchEvents(token, date, selectedCalendar);
+      else
+        fetchEvents(token, date);
     }
     else {
       console.log(`handleReloadAuthResponse> error = ${response && response.error}`);
@@ -85,7 +92,9 @@ export function App() {
       setGoogleUser(response);
       setTokenExpiration(response.tokenObj.expires_at);
       setIsLoggedIn(true);
-      fetchEvents(selectedDate, response.tokenObj.access_token);
+      const token = response.tokenObj.access_token;
+      fetchCalendars(token);
+      fetchEvents(token, selectedDate);
     } else {
       console.log(`handleGoogleLoginResponse> error = ${response && response.error}`);
       setIsLoggedIn(false);
@@ -127,7 +136,7 @@ export function App() {
     setShowPopup(!showPopup);
   }
 
-  async function fetchEvents(date, token) {
+  async function fetchEvents(token, date, cal="primary") {
     setEventsData({});
     const start = new Date(
       date.getFullYear(),
@@ -148,7 +157,7 @@ export function App() {
       0
     );
 
-    const calendar = encodeURIComponent("primary");
+    const calendar = encodeURIComponent(cal);
     const timeMin = encodeURIComponent(start.toISOString());
     const timeMax = encodeURIComponent(end.toISOString());
     const fields = encodeURIComponent("items(end,location,start,summary)");
@@ -173,25 +182,68 @@ export function App() {
     response.items.forEach(event => {
       if (event.location) {
         const location = event.location;
-        const venue = event.location.split(",")[0];
-        const eventName = event.summary;
-        if (event.start && event.end) {
-          if (!eventsData[venue]) {
-            eventsData[venue] = [];
-          }
+        const venue = venueData.find(v => location.includes(v.name));
+        if (venue) {
+          const eventName = event.summary;
+          if (event.start && event.end) {
+            if (!eventsData[venue.name]) {
+              eventsData[venue.name] = [];
+            }
 
-          eventsData[venue].push({
-            title: eventName,
-            venue: venue,
-            location: location,
-            start: event.start.dateTime || event.start.date,
-            end: event.end.dateTime || event.end.date
-          });
+            eventsData[venue.name].push({
+              title: eventName,
+              venue: venue.name,
+              location: location,
+              start: event.start.dateTime || event.start.date,
+              end: event.end.dateTime || event.end.date
+            });
+          }
         }
       }
     });
 
     setEventsData(eventsData);
+  }
+
+  async function fetchCalendars(token) {
+    setCalendarsData([]);
+    const calendarListRequest = `https://www.googleapis.com/calendar/v3/users/me/calendarList`;
+    try {
+      const response = await fetch(calendarListRequest, {
+        method: "GET",
+        headers: new Headers({ Authorization: "Bearer " + token })
+      });
+      const result = await response.json();
+      parseListCalendarsResponse(result);
+    } catch (error) {
+      console.log(`fetchCalendars> error = ${error.status}`);
+    }
+  }
+
+  function parseListCalendarsResponse(response) {
+    let calendarsData = [];
+    calendarsData = response.items.map(calendar => {
+      return {
+        id: calendar.id,
+        name: calendar.summary
+      };
+    });
+    setCalendarsData(calendarsData);
+  }
+
+  function getCalendarOptions() {
+    let optionItems = calendarsData.map((calendar) =>
+        <option key={calendar.id} id={calendar.id}>{calendar.name}</option>
+    );
+    return optionItems;
+  }
+
+  function onCalendarChange(event) {
+    const name = event.target.value;
+    let cal = {};
+    cal = calendarsData.find(calendar => calendar.name == name)
+    setSelectedCalendar(cal);
+    fetchEvents(googleUser.tokenObj.access_token, selectedDate, cal.id);
   }
 
   return (
@@ -213,6 +265,11 @@ export function App() {
             showYearDropdown
             dropdownMode="select"
           />
+          <br />
+          <br />
+          <select onChange={onCalendarChange}>
+            {getCalendarOptions()}
+          </select>
           <br />
           <br />
           <button className="add" onClick={togglePopup}>
@@ -256,6 +313,7 @@ export function App() {
           <VenueTable
             venueData={venueData}
             selectedDate={selectedDate}
+            selectedCalendar={selectedCalendar}
             eventsData={eventsData}
             handleRemoveVenue={removeVenue}
             showDelete={showDelete}
